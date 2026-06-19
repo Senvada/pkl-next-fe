@@ -28,7 +28,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # ─────────────────────────────────────────────────────────────────────────────
 FROM base AS deps
 
-COPY package.json bun.lock .npmrc ./
+COPY package.json bun.lock ./
 
 RUN \
     --mount=type=cache,target=/root/.bun/install/cache \
