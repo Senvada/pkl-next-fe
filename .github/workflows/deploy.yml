@@ -1,0 +1,73 @@
+name: Deploy
+
+on:
+repository_dispatch:
+
+types:
+  - frontend-staging-deploy
+  - frontend-production-deploy
+
+jobs:
+
+deploy:
+
+runs-on: ubuntu-latest
+
+steps:
+
+  - name: Resolve
+    id: cfg
+    run: |
+
+      if [[ "${{ github.event.action }}" == "frontend-production-deploy" ]]
+      then
+        echo "host=${{ secrets.PROD_HOST }}" >> $GITHUB_OUTPUT
+        echo "key=${{ secrets.PROD_KEY }}" >> $GITHUB_OUTPUT
+        echo "tailscale=false" >> $GITHUB_OUTPUT
+      else
+        echo "host=${{ secrets.STAGING_HOST }}" >> $GITHUB_OUTPUT
+        echo "key=${{ secrets.STAGING_KEY }}" >> $GITHUB_OUTPUT
+        echo "tailscale=true" >> $GITHUB_OUTPUT
+      fi
+
+  - name: Connect Tailscale
+    if: steps.cfg.outputs.tailscale == 'true'
+
+    uses: tailscale/github-action@v3
+
+    with:
+      authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+
+  - name: Verify Network
+    if: steps.cfg.outputs.tailscale == 'true'
+
+    run: |
+
+      tailscale status
+
+      ping -c 4 \
+      ${{ steps.cfg.outputs.host }}
+
+  - name: SSH Deploy
+
+    uses: appleboy/ssh-action@v1.2.2
+
+    with:
+
+      host: ${{ steps.cfg.outputs.host }}
+
+      username: exiro
+
+      key: ${{ steps.cfg.outputs.key }}
+
+      script: |
+
+        set -e
+
+        cd ~/docker/pkl-next-fe
+
+        docker compose pull
+
+        docker compose up -d
+
+        docker image prune -af
