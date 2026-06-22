@@ -10,57 +10,44 @@ permissions:
   packages: write
 
 env:
-  IMAGE: ghcr.io/${{ github.repository }}
+  IMAGE: ghcr.io/senvada/pkl-next-fe
+
+concurrency:
+  group: release-staging
+  cancel-in-progress: true
 
 jobs:
-
   release:
-
     runs-on: ubuntu-latest
-
     environment:
       name: staging
-
     steps:
-
-      - uses: actions/checkout@v4
-
-      - uses: docker/setup-buildx-action@v3
-
-      - uses: docker/login-action@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login GHCR
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build & Push
         uses: docker/build-push-action@v6
-
         with:
           context: .
-
           target: staging
-
           push: true
-
           tags: |
             ${{ env.IMAGE }}:staging
             ${{ env.IMAGE }}:${{ github.sha }}
-
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
+          provenance: false
           build-args: |
             NEXT_PUBLIC_API_URL=${{ vars.API_URL }}
-
-      - name: Trigger Deploy
-        uses: peter-evans/repository-dispatch@v3
-
-        with:
-          event-type: frontend-staging-deploy
-
-          client-payload: |
-            {
-              "image":"${{ env.IMAGE }}:staging",
-              "sha":"${{ github.sha }}"
-            }
+      - name: Summary
+        run: |
+          echo "Image published:"
+          echo "${{ env.IMAGE }}:staging"
+          echo "${{ env.IMAGE }}:${{ github.sha }}"
