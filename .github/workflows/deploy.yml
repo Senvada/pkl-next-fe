@@ -1,73 +1,48 @@
 name: Deploy
 
 on:
-repository_dispatch:
+  workflow_run:
+    workflows:
+      - Release — Staging
+    types:
+      - completed
 
-types:
-  - frontend-staging-deploy
-  - frontend-production-deploy
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
 
 jobs:
+  deploy:
+    if: >
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+    steps:
+      - name: Connect Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
 
-deploy:
+      - name: Verify Network
+        run: |
+          tailscale status
+          ping -c 4 \
+          ${{ secrets.STAGING_HOST }}
 
-runs-on: ubuntu-latest
-
-steps:
-
-  - name: Resolve
-    id: cfg
-    run: |
-
-      if [[ "${{ github.event.action }}" == "frontend-production-deploy" ]]
-      then
-        echo "host=${{ secrets.PROD_HOST }}" >> $GITHUB_OUTPUT
-        echo "key=${{ secrets.PROD_KEY }}" >> $GITHUB_OUTPUT
-        echo "tailscale=false" >> $GITHUB_OUTPUT
-      else
-        echo "host=${{ secrets.STAGING_HOST }}" >> $GITHUB_OUTPUT
-        echo "key=${{ secrets.STAGING_KEY }}" >> $GITHUB_OUTPUT
-        echo "tailscale=true" >> $GITHUB_OUTPUT
-      fi
-
-  - name: Connect Tailscale
-    if: steps.cfg.outputs.tailscale == 'true'
-
-    uses: tailscale/github-action@v3
-
-    with:
-      authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
-
-  - name: Verify Network
-    if: steps.cfg.outputs.tailscale == 'true'
-
-    run: |
-
-      tailscale status
-
-      ping -c 4 \
-      ${{ steps.cfg.outputs.host }}
-
-  - name: SSH Deploy
-
-    uses: appleboy/ssh-action@v1.2.2
-
-    with:
-
-      host: ${{ steps.cfg.outputs.host }}
-
-      username: exiro
-
-      key: ${{ steps.cfg.outputs.key }}
-
-      script: |
-
-        set -e
-
-        cd ~/docker/pkl-next-fe
-
-        docker compose pull
-
-        docker compose up -d
-
-        docker image prune -af
+      - name: SSH Deploy
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: exiro
+          key: ${{ secrets.STAGING_KEY }}
+          script: |
+            set -euo pipefail
+            cd ~/docker/pkl-next-fe
+            echo "Pull"
+            docker compose pull
+            echo "Restart"
+            docker compose up -d
+            echo "Cleanup"
+            docker image prune -af
+            echo "Deploy complete"
