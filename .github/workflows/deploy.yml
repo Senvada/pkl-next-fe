@@ -35,7 +35,7 @@ jobs:
         with:
           host: ${{ secrets.STAGING_HOST }}
           username: exiro
-          key: ${{ secrets.STAGING_KEY }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
           script: |
             set -euo pipefail
             cd ~/docker/pkl-next-fe
