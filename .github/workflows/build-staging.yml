@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
     environment:
       name: staging
@@ -51,3 +51,24 @@ jobs:
           echo "Image published:"
           echo "${{ env.IMAGE }}:staging"
           echo "${{ env.IMAGE }}:${{ github.sha }}"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+    steps:
+      - name: Connect Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+
+      - name: Verify Network
+        run: |
+          tailscale status
+          ping -c 4 \
+          ${{ secrets.STAGING_HOST }}
+
+      - name: Trigger Deploy via SEHooks
+        run: |
+          curl -s -X POST http://${{ secrets.STAGING_HOST }}:8080/webhook/b9463c0c5a79284ba8630bfa5769592a994921d426901d2a
