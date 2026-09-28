@@ -3,10 +3,8 @@
 import { Company } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import {
-  Users,
   Mail,
   Phone,
-  Building2,
   ExternalLink,
   MapPin,
   CheckCircle,

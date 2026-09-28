@@ -2,7 +2,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Company, DEPARTMENTS } from "@/lib/mock-data";
 import { MapPin, Star, Users, ArrowUpRight } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 
 interface CompanyCardProps {
   company: Company;

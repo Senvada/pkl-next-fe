@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import { useState, useMemo } from "react";
 import { Company, Department } from "@/lib/mock-data";
 import {
-  MapPin,
   Search,
   Building2,
   Star,

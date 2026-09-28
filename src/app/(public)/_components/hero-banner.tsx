@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Building2, Sparkles, CheckCircle2, Search } from "lucide-react";
+import { ArrowRight, Building2, Sparkles, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Background from "@/assets/img/Background.webp";
 

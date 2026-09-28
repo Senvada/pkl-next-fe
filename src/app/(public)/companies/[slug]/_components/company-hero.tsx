@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Company, DEPARTMENTS } from "@/lib/mock-data";
-import { ArrowLeft, MapPin, Star, Building2, Globe } from "lucide-react";
+import { ArrowLeft, MapPin, Star, Globe } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default function CompanyHero({ company }: { company: Company }) {
