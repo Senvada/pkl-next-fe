@@ -72,4 +72,4 @@ jobs:
 
       - name: Trigger Deploy via SEHooks
         run: |
-          curl -s -X POST http://${{ secrets.PRODUCTION_HOST }}:8080/webhook/b9463c0c5a79284ba8630bfa5769592a994921d426901d2a
+          curl -s -X POST http://${{ secrets.PRODUCTION_HOST }}:8080/webhook/958355ae4e55ff5aa5eefef2ca4ba615937f72fdb258a215
