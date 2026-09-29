@@ -1,0 +1,93 @@
+name: Deploy — Staging
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE: ghcr.io/senvada/pkl-next-fe
+
+concurrency:
+  group: deploy-staging-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: CI Verification
+    uses: ./.github/workflows/ci.yml
+
+  build:
+    name: Build & Push Staging Image
+    needs: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: staging
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker Metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=raw,value=staging
+            type=raw,value=pr-${{ github.event.pull_request.number }},enable=${{ github.event_name == 'pull_request' }}
+            type=sha,prefix=sha-
+            type=raw,value=${{ github.sha }}
+
+      - name: Build & Push Staging Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: staging
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: false
+          build-args: |
+            NEXT_PUBLIC_API_URL=${{ vars.API_URL }}
+
+  deploy:
+    name: Deploy to Staging Server
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: staging
+    steps:
+      - name: Connect Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+
+      - name: Verify Network
+        run: |
+          tailscale status
+          ping -c 4 ${{ secrets.STAGING_HOST }}
+
+      - name: Trigger Deploy via SEHooks
+        run: |
+          curl -i --fail -sS -X POST "http://${{ secrets.STAGING_HOST }}:3000/webhook/57a06b6f316173d48e43bd06cbe3deb553c3f6a707894894"
