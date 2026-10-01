@@ -1,0 +1,36 @@
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar_url?: string | null;
+  status: string;
+  role_id: string;
+  role_name: string;
+  department_id?: string | null;
+  company_id?: string | null;
+  google_bound: boolean;
+}
+
+export interface AuthResponse {
+  user: User;
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+}
+
+export interface LoginFormData {
+  email: string;
+  password: string;
+  remember: boolean;
+}
+
+export interface ApiResponse<T = unknown> {
+  success: boolean;
+  message: string;
+  data?: T;
+  error?: unknown;
+  meta: {
+    request_id: string;
+    timestamp: string;
+  };
+}
