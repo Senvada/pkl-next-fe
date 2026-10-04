@@ -38,6 +38,7 @@ import {
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 import Logo from "@/assets/icon/Logo(150x150).svg";
+import { useCurrentUser } from "@/hooks/modules/auth";
 
 type NavUser = {
   name: string;
@@ -74,7 +75,18 @@ type NavbarProps = {
   user?: NavUser | null;
 };
 
-const Navbar = ({ user = null }: NavbarProps) => {
+const Navbar = ({ user: propUser = null }: NavbarProps) => {
+  const currentUser = useCurrentUser();
+  const user: NavUser | null =
+    propUser ||
+    (currentUser
+      ? {
+          name: currentUser.name,
+          email: currentUser.email,
+          image: currentUser.avatar_url ?? undefined,
+          isAuthenticated: true,
+        }
+      : null);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const activeIndex = getActiveIndex(pathname ?? "/");
