@@ -29,6 +29,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useCurrentUser, useLogout } from "@/hooks/modules/auth"
 
 const themeOptions = [
   { label: "Terang", value: "light", icon: Sun },
@@ -50,7 +51,7 @@ const defaultUser: SidebarUser = {
 }
 
 export default function SidebarFooterSection({
-  user = defaultUser,
+  user: propUser,
   onLogout,
 }: {
   user?: SidebarUser
@@ -58,12 +59,21 @@ export default function SidebarFooterSection({
 }) {
   const { isMobile } = useSidebar()
   const { theme, setTheme } = useTheme()
+  const currentUser = useCurrentUser()
+  const logoutMutation = useLogout()
+
+  const user: SidebarUser = propUser || (currentUser ? {
+    name: currentUser.name,
+    email: currentUser.email,
+    role: currentUser.role_name,
+    avatarUrl: currentUser.avatar_url,
+  } : defaultUser)
 
   const handleLogout = () => {
     if (onLogout) {
       onLogout()
     } else {
-      window.location.href = "/login"
+      logoutMutation.mutate()
     }
   }
 

@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import Logo from "@/assets/icon/Logo(150x150).svg";
+import { useLogin } from "@/hooks/modules/auth/useLogin";
 import type { LoginFormData } from "@/types/auth";
 
 type LoginFormProps = {
@@ -36,16 +37,19 @@ export default function LoginForm({
   errorMessage: externalError = null,
   onClearError,
 }: LoginFormProps) {
+  const loginMutation = useLogin();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [internalLoading, setInternalLoading] = useState(false);
   const [internalError, setInternalError] = useState<string | null>(null);
   const [showHelpModal, setShowHelpModal] = useState(false);
 
-  const isLoading = externalLoading || internalLoading;
-  const currentError = externalError || internalError;
+  const isLoading = externalLoading || loginMutation.isPending;
+  const currentError =
+    externalError ||
+    internalError ||
+    (loginMutation.error ? loginMutation.error.message : null);
 
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const isPasswordValid = password.length >= 6;
@@ -53,6 +57,7 @@ export default function LoginForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setInternalError(null);
+    loginMutation.reset();
     if (onClearError) onClearError();
 
     if (!email) {
@@ -71,14 +76,7 @@ export default function LoginForm({
     if (onSubmit) {
       await onSubmit({ email, password, remember });
     } else {
-      // Default handler sementara sebelum integrasi TanStack Query
-      setInternalLoading(true);
-      setTimeout(() => {
-        setInternalLoading(false);
-        setInternalError(
-          "Fitur pemanggilan API sedang disiapkan dengan TanStack Query."
-        );
-      }, 800);
+      loginMutation.mutate({ email, password, remember });
     }
   };
 
@@ -94,6 +92,7 @@ export default function LoginForm({
 
   const clearCurrentError = () => {
     setInternalError(null);
+    loginMutation.reset();
     if (onClearError) onClearError();
   };
 
