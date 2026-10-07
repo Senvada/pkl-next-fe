@@ -7,8 +7,21 @@ export type RequestOptions = RequestInit & {
   skipRefresh?: boolean
 }
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "/api/v1"
+/**
+ * Resolves the API Base URL:
+ * - Production: Strictly enforces relative endpoint "/api/v1" on the frontend domain (handled by Gateway/Nginx).
+ * - Development: Uses manual API endpoint configurable via NEXT_PUBLIC_API_URL or defaults to "http://localhost:3001/api/v1".
+ */
+export function getApiBaseUrl(): string {
+  if (process.env.NODE_ENV === "production") {
+    return "/api/v1"
+  }
+
+  const manualEndpoint = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "")
+  return manualEndpoint || "http://localhost:3001/api/v1"
+}
+
+export const API_BASE_URL = getApiBaseUrl()
 
 let refreshPromise: Promise<string | null> | null = null
 
@@ -30,7 +43,8 @@ export async function refreshAccessToken(): Promise<string | null> {
 
   refreshPromise = (async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/auth/refresh`, {
+      const baseUrl = getApiBaseUrl()
+      const res = await fetch(`${baseUrl}/auth/refresh`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -71,9 +85,10 @@ export async function apiFetch<T>(
 ): Promise<T> {
   const { auth = true, skipRefresh = false, headers, ...rest } = options
 
+  const baseUrl = getApiBaseUrl()
   const url = endpoint.startsWith("http")
     ? endpoint
-    : `${API_BASE_URL}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`
+    : `${baseUrl}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`
 
   const token = auth ? authStore.getToken() : null
 
