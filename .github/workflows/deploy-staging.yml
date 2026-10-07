@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 permissions:
@@ -68,7 +67,7 @@ jobs:
           cache-to: type=gha,mode=max
           provenance: false
           build-args: |
-            NEXT_PUBLIC_API_URL=${{ vars.API_URL }}
+            NEXT_PUBLIC_API_URL=${{ vars.API_URL || '' }}
 
   deploy:
     name: Deploy to Staging Server

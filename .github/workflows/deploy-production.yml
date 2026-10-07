@@ -90,7 +90,7 @@ jobs:
           cache-to: type=gha,mode=max
           provenance: false
           build-args: |
-            NEXT_PUBLIC_API_URL=${{ vars.API_URL }}
+            NEXT_PUBLIC_API_URL=${{ vars.API_URL || '' }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -107,9 +107,10 @@ jobs:
             # Pull image
             docker pull ${{ env.IMAGE }}:${{ github.ref_name }}
 
-            # Jalankan container
+            # Jalankan container (terhubung dengan gateway di network pkl-net)
             docker run -d \
               --name pkl-next-fe \
+              --network pkl-net \
               -p 3000:3000 \
               --restart unless-stopped \
               ${{ env.IMAGE }}:${{ github.ref_name }}
