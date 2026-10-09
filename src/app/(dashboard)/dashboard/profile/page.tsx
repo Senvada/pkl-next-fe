@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import Link from "next/link"
 import {
   User as UserIcon,
@@ -11,9 +10,6 @@ import {
   CheckCircle2,
   Calendar,
   Cloud,
-  Check,
-  AlertCircle,
-  Building,
 } from "lucide-react"
 
 import { useProfileQuery } from "@/hooks/modules/profile"
@@ -53,11 +49,11 @@ export default function ProfilePage() {
 
   const initials = user?.name
     ? user.name
-        .split(" ")
-        .slice(0, 2)
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
+      .split(" ")
+      .slice(0, 2)
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
     : "U"
 
   return (

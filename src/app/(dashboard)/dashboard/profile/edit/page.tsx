@@ -6,10 +6,7 @@ import {
   ArrowLeft,
   Camera,
   Trash2,
-  Lock,
   User as UserIcon,
-  Mail,
-  Shield,
   Eye,
   EyeOff,
   CheckCircle2,
@@ -54,7 +51,8 @@ export default function EditProfilePage() {
   const deleteAvatarMutation = useDeleteAvatar()
 
   // Profile Form state
-  const [name, setName] = React.useState("")
+  const [customName, setCustomName] = React.useState<string | null>(null)
+  const name = customName ?? (user?.name || "")
   const [profileSuccessMsg, setProfileSuccessMsg] = React.useState<string | null>(null)
   const [profileErrorMsg, setProfileErrorMsg] = React.useState<string | null>(null)
 
@@ -76,13 +74,6 @@ export default function EditProfilePage() {
     text: string
   } | null>(null)
   const fileInputRef = React.useRef<HTMLInputElement>(null)
-
-  // Sync state when profile loads
-  React.useEffect(() => {
-    if (user?.name) {
-      setName(user.name)
-    }
-  }, [user?.name])
 
   // File selection for avatar
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,6 +153,7 @@ export default function EditProfilePage() {
     try {
       await updateProfileMutation.mutateAsync({ name: name.trim() })
       setProfileSuccessMsg("Profil berhasil diperbarui!")
+      setCustomName(null)
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Gagal memperbarui profil."
       setProfileErrorMsg(msg)
@@ -390,7 +382,7 @@ export default function EditProfilePage() {
                 <Input
                   type="text"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => setCustomName(e.target.value)}
                   placeholder="Masukkan nama lengkap"
                   required
                   className="rounded-xl h-9 text-xs"
