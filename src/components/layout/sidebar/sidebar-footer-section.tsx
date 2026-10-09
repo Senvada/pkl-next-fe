@@ -169,6 +169,14 @@ export default function SidebarFooterSection({
 
             <DropdownMenuSeparator className="bg-sidebar-border" />
 
+            {/* Quick Link to Profile */}
+            <DropdownMenuItem asChild className="cursor-pointer gap-2 rounded-lg text-xs">
+              <Link href="/dashboard/profile">
+                <UserIcon className="size-3.5 text-muted-foreground" />
+                <span>Profil Akun</span>
+              </Link>
+            </DropdownMenuItem>
+
             {/* Quick Link to Portal */}
             <DropdownMenuItem asChild className="cursor-pointer gap-2 rounded-lg text-xs">
               <Link href="/">

@@ -19,6 +19,7 @@ const routeLabels: Record<string, string> = {
   "/dashboard/users": "Manajemen Pengguna",
   "/dashboard/roles": "Hak Akses & Role",
   "/dashboard/profile": "Profil Akun",
+  "/dashboard/profile/edit": "Edit Profil",
   "/dashboard/settings": "Pengaturan Sistem",
 }
 

@@ -16,7 +16,7 @@ export default function DashboardLayout({
   return (
     <SidebarProvider defaultOpen={true}>
       <AppSidebar />
-      <SidebarInset className="min-w-0 flex flex-col flex-1 overflow-hidden bg-slate-50/60 dark:bg-[#0B111A]">
+      <SidebarInset className="min-w-0 py-1.25 flex flex-col flex-1 overflow-hidden bg-slate-50/60 dark:bg-[#0B111A]">
         {/* Sticky Dashboard Topbar Header */}
         <header className="sticky top-0 z-30 flex h-14 sm:h-16 shrink-0 items-center justify-between gap-2 border-b border-border/70 bg-background/80 px-4 sm:px-6 backdrop-blur-md">
           <div className="flex items-center gap-2">
