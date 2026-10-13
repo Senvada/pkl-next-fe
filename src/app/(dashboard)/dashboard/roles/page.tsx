@@ -72,202 +72,44 @@ export default function RolesManagementPage() {
   )
 
   const { data: roles = [], isLoading, isError, error } = useRolesQuery()
-
-  const createRoleMutation = useCreateRole()
-  const updateRoleMutation = useUpdateRole()
   const deleteRoleMutation = useDeleteRole()
 
-  // Selected Role & Form state
+  // Selected Role ID & Creating New state
   const [selectedRoleId, setSelectedRoleId] = React.useState<string | null>(null)
   const [isCreatingNew, setIsCreatingNew] = React.useState(false)
 
-  const [roleName, setRoleName] = React.useState("")
-  const [color, setColor] = React.useState("#3B82F6")
-  const [permissions, setPermissions] = React.useState<RolesPermission>(createEmptyPermissions())
-
-  // Search & Filter state
+  // Search state
   const [roleSearch, setRoleSearch] = React.useState("")
-  const [permSearch, setPermSearch] = React.useState("")
-
-  // Notice banner state
-  const [notice, setNotice] = React.useState<{
-    type: "success" | "error"
-    text: string
-  } | null>(null)
 
   // Delete modal state
   const [roleToDelete, setRoleToDelete] = React.useState<Role | null>(null)
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false)
+  const [deleteNotice, setDeleteNotice] = React.useState<{
+    type: "success" | "error"
+    text: string
+  } | null>(null)
 
   // Mobile view toggle (shows editor on mobile if a role is selected)
   const [mobileEditorOpen, setMobileEditorOpen] = React.useState(false)
 
-  // Active role reference
-  const selectedRole = React.useMemo(() => {
-    if (isCreatingNew) return null
-    return roles.find((r) => r.id === selectedRoleId) || null
-  }, [roles, selectedRoleId, isCreatingNew])
+  // Active role reference is derived without any effect
+  const activeRoleId = isCreatingNew ? null : (selectedRoleId ?? roles[0]?.id ?? null)
+  const selectedRole = isCreatingNew
+    ? null
+    : roles.find((r) => r.id === activeRoleId) || null
 
-  // Select initial role when list loads
-  React.useEffect(() => {
-    if (!selectedRoleId && !isCreatingNew && roles.length > 0) {
-      const firstRole = roles[0]
-      setSelectedRoleId(firstRole.id || null)
-      setRoleName(firstRole.name)
-      setColor(firstRole.color || "#3B82F6")
-      setPermissions(firstRole.permissions || createEmptyPermissions())
-    }
-  }, [roles, selectedRoleId, isCreatingNew])
-
-  // Synchronize state when selected role changes
   const handleSelectRole = (role: Role) => {
     setSelectedRoleId(role.id || null)
     setIsCreatingNew(false)
-    setRoleName(role.name)
-    setColor(role.color || "#3B82F6")
-    setPermissions(role.permissions || createEmptyPermissions())
-    setNotice(null)
-    setPermSearch("")
     setMobileEditorOpen(true)
+    setDeleteNotice(null)
   }
 
-  // Handle click on "Tambah Role Baru"
   const handleStartCreateRole = () => {
     setSelectedRoleId(null)
     setIsCreatingNew(true)
-    setRoleName("")
-    setColor("#3B82F6")
-    setPermissions(createEmptyPermissions())
-    setNotice(null)
-    setPermSearch("")
     setMobileEditorOpen(true)
-  }
-
-  // Detect dirty / unsaved changes
-  const isDirty = React.useMemo(() => {
-    if (isCreatingNew) {
-      return roleName.trim().length > 0 || color !== "#3B82F6"
-    }
-    if (!selectedRole) return false
-    return (
-      roleName !== selectedRole.name ||
-      color !== selectedRole.color ||
-      JSON.stringify(permissions) !== JSON.stringify(selectedRole.permissions)
-    )
-  }, [isCreatingNew, selectedRole, roleName, color, permissions])
-
-  // Reset to current selected role values
-  const handleReset = () => {
-    if (isCreatingNew) {
-      setRoleName("")
-      setColor("#3B82F6")
-      setPermissions(createEmptyPermissions())
-    } else if (selectedRole) {
-      setRoleName(selectedRole.name)
-      setColor(selectedRole.color || "#3B82F6")
-      setPermissions(selectedRole.permissions || createEmptyPermissions())
-    }
-    setNotice(null)
-  }
-
-  // Toggle individual permission with dependency logic
-  const togglePermission = (module: string, action: string, actions: string[]) => {
-    setPermissions((prev) => {
-      const currentMod = prev[module] || {}
-      const curValue = !!currentMod[action]
-      const newValue = !curValue
-
-      // 1. If unchecking 'read', uncheck all actions in this module
-      if (action === "read" && !newValue) {
-        return {
-          ...prev,
-          [module]: Object.fromEntries(actions.map((a) => [a, false])),
-        }
-      }
-
-      // 2. If checking any action besides 'read', ensure 'read' is also checked
-      if (action !== "read" && newValue && !currentMod.read) {
-        return {
-          ...prev,
-          [module]: {
-            ...currentMod,
-            [action]: true,
-            read: true,
-          },
-        }
-      }
-
-      // 3. Normal toggle
-      return {
-        ...prev,
-        [module]: {
-          ...currentMod,
-          [action]: newValue,
-        },
-      }
-    })
-  }
-
-  // Toggle all actions in a single module
-  const toggleAllModule = (module: string, actions: string[]) => {
-    setPermissions((prev) => {
-      const currentMod = prev[module] || {}
-      const allActive = actions.every((a) => !!currentMod[a])
-      const targetState = !allActive
-
-      return {
-        ...prev,
-        [module]: Object.fromEntries(actions.map((a) => [a, targetState])),
-      }
-    })
-  }
-
-  // Grant all permissions across all modules
-  const handleEnableAllPermissions = () => {
-    setPermissions(createFullPermissions())
-  }
-
-  // Disable all permissions across all modules
-  const handleDisableAllPermissions = () => {
-    setPermissions(createEmptyPermissions())
-  }
-
-  // Save role changes (create or update)
-  const handleSaveRole = async () => {
-    setNotice(null)
-    const trimmedName = roleName.trim()
-    if (!trimmedName) {
-      setNotice({ type: "error", text: "Nama role wajib diisi." })
-      return
-    }
-
-    try {
-      if (isCreatingNew) {
-        const created = await createRoleMutation.mutateAsync({
-          name: trimmedName,
-          color,
-          permissions,
-        })
-        setNotice({ type: "success", text: `Role "${created.name}" berhasil dibuat!` })
-        setIsCreatingNew(false)
-        if (created.id) {
-          setSelectedRoleId(created.id)
-        }
-      } else if (selectedRole && selectedRole.id) {
-        const updated = await updateRoleMutation.mutateAsync({
-          id: selectedRole.id,
-          payload: {
-            name: trimmedName,
-            color,
-            permissions,
-          },
-        })
-        setNotice({ type: "success", text: `Role "${updated.name}" berhasil diperbarui!` })
-      }
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Gagal menyimpan role."
-      setNotice({ type: "error", text: msg })
-    }
+    setDeleteNotice(null)
   }
 
   // Prompt delete dialog
@@ -288,14 +130,14 @@ export default function RolesManagementPage() {
         setSelectedRoleId(null)
         setIsCreatingNew(false)
       }
-      setNotice({
+      setDeleteNotice({
         type: "success",
         text: `Role "${roleToDelete.name}" berhasil dihapus.`,
       })
       setRoleToDelete(null)
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Gagal menghapus role."
-      setNotice({ type: "error", text: msg })
+      setDeleteNotice({ type: "error", text: msg })
       setDeleteModalOpen(false)
     }
   }
@@ -306,32 +148,6 @@ export default function RolesManagementPage() {
     const q = roleSearch.toLowerCase()
     return roles.filter((r) => r.name.toLowerCase().includes(q))
   }, [roles, roleSearch])
-
-  // Filter modules and actions based on search
-  const filteredModules = React.useMemo(() => {
-    const entries = Object.entries(MODULES_CONFIG)
-    if (!permSearch.trim()) return entries
-
-    const q = permSearch.toLowerCase()
-    return entries.filter(([key, config]) => {
-      const modMatch =
-        key.toLowerCase().includes(q) ||
-        config.title.toLowerCase().includes(q) ||
-        config.description.toLowerCase().includes(q)
-
-      const actionMatch = Object.entries(config.actions).some(
-        ([actKey, actConfig]) =>
-          actKey.toLowerCase().includes(q) ||
-          actConfig.label.toLowerCase().includes(q) ||
-          actConfig.description.toLowerCase().includes(q)
-      )
-
-      return modMatch || actionMatch
-    })
-  }, [permSearch])
-
-  const isSystemAdminRole = selectedRole?.name.toLowerCase() === "admin"
-  const isSaving = createRoleMutation.isPending || updateRoleMutation.isPending
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
@@ -418,7 +234,7 @@ export default function RolesManagementPage() {
               {mounted &&
                 !isLoading &&
                 filteredRoles.map((role) => {
-                  const isSelected = !isCreatingNew && role.id === selectedRoleId
+                  const isSelected = !isCreatingNew && role.id === activeRoleId
                   const isAdmin = role.name.toLowerCase() === "admin"
 
                   return (
@@ -503,6 +319,24 @@ export default function RolesManagementPage() {
             </Button>
           </div>
 
+          {/* Delete Notice Banner */}
+          {deleteNotice && (
+            <div
+              className={`flex items-center gap-2 p-3 text-xs rounded-xl border ${
+                deleteNotice.type === "success"
+                  ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20"
+                  : "bg-destructive/10 text-destructive border-destructive/20"
+              }`}
+            >
+              {deleteNotice.type === "success" ? (
+                <CheckCircle2 className="size-4 shrink-0" />
+              ) : (
+                <AlertCircle className="size-4 shrink-0" />
+              )}
+              <span>{deleteNotice.text}</span>
+            </div>
+          )}
+
           {!selectedRole && !isCreatingNew ? (
             <Card className="rounded-2xl border border-dashed border-border p-12 text-center bg-card/40 flex flex-col items-center justify-center min-h-[28rem]">
               <div className="size-16 rounded-2xl bg-blue-600/10 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4">
@@ -523,236 +357,23 @@ export default function RolesManagementPage() {
               </Button>
             </Card>
           ) : (
-            <div className="space-y-4">
-              {/* Notice Feedback Banner */}
-              {notice && (
-                <div
-                  className={`flex items-center gap-2 p-3 text-xs rounded-xl border ${
-                    notice.type === "success"
-                      ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20"
-                      : "bg-destructive/10 text-destructive border-destructive/20"
-                  }`}
-                >
-                  {notice.type === "success" ? (
-                    <CheckCircle2 className="size-4 shrink-0" />
-                  ) : (
-                    <AlertCircle className="size-4 shrink-0" />
-                  )}
-                  <span>{notice.text}</span>
-                </div>
-              )}
-
-              {/* Editor Header Card: Name, Color, Search */}
-              <Card className="rounded-2xl border border-border shadow-xs bg-card/60 backdrop-blur-xs">
-                <CardHeader className="p-4 pb-3 space-y-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <ColorPickerPopover
-                        color={color}
-                        onChange={setColor}
-                        disabled={isSaving}
-                      />
-                      <div className="flex-1 min-w-48">
-                        <Input
-                          type="text"
-                          value={roleName}
-                          onChange={(e) => setRoleName(e.target.value)}
-                          placeholder="Masukkan nama role..."
-                          disabled={isSystemAdminRole || isSaving}
-                          className="h-9 text-xs sm:text-sm font-semibold rounded-xl"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 self-end sm:self-auto">
-                      {isSystemAdminRole && (
-                        <Badge
-                          variant="secondary"
-                          className="gap-1 bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20 text-xs px-2.5 py-1 rounded-lg"
-                        >
-                          <Lock className="size-3" />
-                          <span>Role Admin Utama</span>
-                        </Badge>
-                      )}
-
-                      {selectedRole && !isCreatingNew && (
-                        <Badge
-                          variant="outline"
-                          className="text-xs px-2.5 py-1 rounded-lg text-muted-foreground"
-                        >
-                          {selectedRole.user_count || 0} Pengguna Aktif
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Permission Search Bar & Bulk Actions */}
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-2 border-t border-border/70">
-                    <div className="relative flex-1">
-                      <Search className="size-3.5 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
-                      <Input
-                        type="text"
-                        value={permSearch}
-                        onChange={(e) => setPermSearch(e.target.value)}
-                        placeholder="Cari modul atau izin..."
-                        className="h-8.5 text-xs pl-8.5 rounded-xl"
-                      />
-                    </div>
-
-                    <div className="flex items-center gap-2 shrink-0">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={handleEnableAllPermissions}
-                        className="h-8.5 text-[11px] px-2.5 rounded-xl gap-1 text-muted-foreground hover:text-foreground cursor-pointer"
-                      >
-                        <CheckCheck className="size-3.5 text-emerald-600 dark:text-emerald-400" />
-                        <span>Aktifkan Semua</span>
-                      </Button>
-
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={handleDisableAllPermissions}
-                        className="h-8.5 text-[11px] px-2.5 rounded-xl gap-1 text-muted-foreground hover:text-foreground cursor-pointer"
-                      >
-                        <XCircle className="size-3.5 text-muted-foreground" />
-                        <span>Nonaktifkan Semua</span>
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-              </Card>
-
-              {/* Permissions Matrix Sections */}
-              <div className="space-y-3.5">
-                {filteredModules.map(([moduleKey, config]) => {
-                  const Icon = MODULE_ICONS[moduleKey] || Sparkles
-                  const actionKeys = Object.keys(config.actions)
-                  const modPermissions = permissions[moduleKey] || {}
-
-                  const allEnabled = actionKeys.every((a) => !!modPermissions[a])
-
-                  return (
-                    <Card
-                      key={moduleKey}
-                      className="rounded-2xl border border-border shadow-xs bg-card/60 backdrop-blur-xs overflow-hidden"
-                    >
-                      <CardHeader className="p-4 pb-3 flex flex-row items-center justify-between space-y-0 border-b border-border/50 bg-muted/20">
-                        <div className="flex items-center gap-2.5">
-                          <div className="size-8 rounded-xl bg-blue-600/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-                            <Icon className="size-4" />
-                          </div>
-                          <div>
-                            <CardTitle className="text-xs sm:text-sm font-bold tracking-tight">
-                              {config.title}
-                            </CardTitle>
-                            <CardDescription className="text-[11px] line-clamp-1">
-                              {config.description}
-                            </CardDescription>
-                          </div>
-                        </div>
-
-                        {/* Toggle All in Module */}
-                        <div className="flex items-center gap-2 shrink-0">
-                          <span className="text-[11px] font-medium text-muted-foreground hidden sm:inline">
-                            {allEnabled ? "Matikan Modul" : "Aktifkan Modul"}
-                          </span>
-                          <Switch
-                            checked={allEnabled}
-                            onCheckedChange={() => toggleAllModule(moduleKey, actionKeys)}
-                            title={allEnabled ? "Nonaktifkan seluruh izin modul" : "Aktifkan seluruh izin modul"}
-                          />
-                        </div>
-                      </CardHeader>
-
-                      <CardContent className="p-3 divide-y divide-border/40">
-                        {Object.entries(config.actions).map(([actionKey, actionConfig]) => {
-                          const isChecked = !!modPermissions[actionKey]
-
-                          return (
-                            <div
-                              key={actionKey}
-                              className="flex items-center justify-between py-2.5 px-2 rounded-xl transition-colors hover:bg-muted/40 gap-3"
-                            >
-                              <div className="min-w-0 flex flex-col">
-                                <span className="text-xs font-semibold text-foreground">
-                                  {actionConfig.label}
-                                </span>
-                                <span className="text-[11px] text-muted-foreground">
-                                  {actionConfig.description}
-                                </span>
-                              </div>
-
-                              <Switch
-                                checked={isChecked}
-                                onCheckedChange={() =>
-                                  togglePermission(moduleKey, actionKey, actionKeys)
-                                }
-                              />
-                            </div>
-                          )
-                        })}
-                      </CardContent>
-                    </Card>
-                  )
-                })}
-              </div>
-
-              {/* Sticky Action Footer */}
-              <div className="sticky bottom-4 z-20 flex items-center justify-between gap-3 p-3.5 rounded-2xl bg-card/90 border border-border shadow-lg backdrop-blur-md">
-                <div className="flex items-center gap-2">
-                  {isDirty ? (
-                    <Badge
-                      variant="outline"
-                      className="text-[11px] px-2 py-0.5 rounded-lg border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-medium"
-                    >
-                      Perubahan Belum Disimpan
-                    </Badge>
-                  ) : (
-                    <span className="text-xs text-muted-foreground hidden sm:inline">
-                      Data role tersimpan
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={handleReset}
-                    disabled={!isDirty || isSaving}
-                    className="rounded-xl h-9 px-3 text-xs gap-1.5 cursor-pointer"
-                  >
-                    <RotateCcw className="size-3.5" />
-                    <span>Batal</span>
-                  </Button>
-
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={handleSaveRole}
-                    disabled={isSaving || !roleName.trim()}
-                    className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold cursor-pointer shadow-xs gap-1.5 text-xs h-9 px-4"
-                  >
-                    {isSaving ? (
-                      <>
-                        <Loader2 className="size-3.5 animate-spin" />
-                        <span>Menyimpan...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Save className="size-3.5" />
-                        <span>Simpan Perubahan</span>
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
-            </div>
+            <RoleEditor
+              key={isCreatingNew ? "new" : selectedRole?.id || "empty"}
+              role={selectedRole}
+              isCreatingNew={isCreatingNew}
+              onSaved={(saved) => {
+                setIsCreatingNew(false)
+                if (saved.id) {
+                  setSelectedRoleId(saved.id)
+                }
+              }}
+              onCancelNew={() => {
+                setIsCreatingNew(false)
+                if (roles.length > 0) {
+                  setSelectedRoleId(roles[0].id || null)
+                }
+              }}
+            />
           )}
         </div>
       </div>
@@ -801,6 +422,404 @@ export default function RolesManagementPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </div>
+  )
+}
+
+interface RoleEditorProps {
+  role: Role | null
+  isCreatingNew: boolean
+  onSaved: (role: Role) => void
+  onCancelNew: () => void
+}
+
+function RoleEditor({ role, isCreatingNew, onSaved, onCancelNew }: RoleEditorProps) {
+  const createRoleMutation = useCreateRole()
+  const updateRoleMutation = useUpdateRole()
+
+  const [roleName, setRoleName] = React.useState(role?.name || "")
+  const [color, setColor] = React.useState(role?.color || "#3B82F6")
+  const [permissions, setPermissions] = React.useState<RolesPermission>(
+    role?.permissions || createEmptyPermissions()
+  )
+  const [permSearch, setPermSearch] = React.useState("")
+  const [notice, setNotice] = React.useState<{
+    type: "success" | "error"
+    text: string
+  } | null>(null)
+
+  const isSystemAdminRole = role?.name.toLowerCase() === "admin"
+  const isSaving = createRoleMutation.isPending || updateRoleMutation.isPending
+
+  const isDirty = React.useMemo(() => {
+    if (isCreatingNew) {
+      return roleName.trim().length > 0 || color !== "#3B82F6"
+    }
+    if (!role) return false
+    return (
+      roleName !== role.name ||
+      color !== role.color ||
+      JSON.stringify(permissions) !== JSON.stringify(role.permissions)
+    )
+  }, [isCreatingNew, role, roleName, color, permissions])
+
+  const handleReset = () => {
+    if (isCreatingNew) {
+      setRoleName("")
+      setColor("#3B82F6")
+      setPermissions(createEmptyPermissions())
+      onCancelNew()
+    } else if (role) {
+      setRoleName(role.name)
+      setColor(role.color || "#3B82F6")
+      setPermissions(role.permissions || createEmptyPermissions())
+    }
+    setNotice(null)
+  }
+
+  const togglePermission = (module: string, action: string, actions: string[]) => {
+    setPermissions((prev) => {
+      const currentMod = prev[module] || {}
+      const curValue = !!currentMod[action]
+      const newValue = !curValue
+
+      // 1. If unchecking 'read', uncheck all actions in this module
+      if (action === "read" && !newValue) {
+        return {
+          ...prev,
+          [module]: Object.fromEntries(actions.map((a) => [a, false])),
+        }
+      }
+
+      // 2. If checking any action besides 'read', ensure 'read' is also checked
+      if (action !== "read" && newValue && !currentMod.read) {
+        return {
+          ...prev,
+          [module]: {
+            ...currentMod,
+            [action]: true,
+            read: true,
+          },
+        }
+      }
+
+      // 3. Normal toggle
+      return {
+        ...prev,
+        [module]: {
+          ...currentMod,
+          [action]: newValue,
+        },
+      }
+    })
+  }
+
+  const toggleAllModule = (module: string, actions: string[]) => {
+    setPermissions((prev) => {
+      const currentMod = prev[module] || {}
+      const allActive = actions.every((a) => !!currentMod[a])
+      const targetState = !allActive
+
+      return {
+        ...prev,
+        [module]: Object.fromEntries(actions.map((a) => [a, targetState])),
+      }
+    })
+  }
+
+  const handleEnableAllPermissions = () => {
+    setPermissions(createFullPermissions())
+  }
+
+  const handleDisableAllPermissions = () => {
+    setPermissions(createEmptyPermissions())
+  }
+
+  const handleSaveRole = async () => {
+    setNotice(null)
+    const trimmedName = roleName.trim()
+    if (!trimmedName) {
+      setNotice({ type: "error", text: "Nama role wajib diisi." })
+      return
+    }
+
+    try {
+      if (isCreatingNew) {
+        const created = await createRoleMutation.mutateAsync({
+          name: trimmedName,
+          color,
+          permissions,
+        })
+        setNotice({ type: "success", text: `Role "${created.name}" berhasil dibuat!` })
+        onSaved(created)
+      } else if (role && role.id) {
+        const updated = await updateRoleMutation.mutateAsync({
+          id: role.id,
+          payload: {
+            name: trimmedName,
+            color,
+            permissions,
+          },
+        })
+        setNotice({ type: "success", text: `Role "${updated.name}" berhasil diperbarui!` })
+        onSaved(updated)
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Gagal menyimpan role."
+      setNotice({ type: "error", text: msg })
+    }
+  }
+
+  const filteredModules = React.useMemo(() => {
+    const entries = Object.entries(MODULES_CONFIG)
+    if (!permSearch.trim()) return entries
+
+    const q = permSearch.toLowerCase()
+    return entries.filter(([key, config]) => {
+      const modMatch =
+        key.toLowerCase().includes(q) ||
+        config.title.toLowerCase().includes(q) ||
+        config.description.toLowerCase().includes(q)
+
+      const actionMatch = Object.entries(config.actions).some(
+        ([actKey, actConfig]) =>
+          actKey.toLowerCase().includes(q) ||
+          actConfig.label.toLowerCase().includes(q) ||
+          actConfig.description.toLowerCase().includes(q)
+      )
+
+      return modMatch || actionMatch
+    })
+  }, [permSearch])
+
+  return (
+    <div className="space-y-4">
+      {notice && (
+        <div
+          className={`flex items-center gap-2 p-3 text-xs rounded-xl border ${
+            notice.type === "success"
+              ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20"
+              : "bg-destructive/10 text-destructive border-destructive/20"
+          }`}
+        >
+          {notice.type === "success" ? (
+            <CheckCircle2 className="size-4 shrink-0" />
+          ) : (
+            <AlertCircle className="size-4 shrink-0" />
+          )}
+          <span>{notice.text}</span>
+        </div>
+      )}
+
+      {/* Editor Header Card: Name, Color, Search */}
+      <Card className="rounded-2xl border border-border shadow-xs bg-card/60 backdrop-blur-xs">
+        <CardHeader className="p-4 pb-3 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <ColorPickerPopover
+                color={color}
+                onChange={setColor}
+                disabled={isSaving}
+              />
+              <div className="flex-1 min-w-48">
+                <Input
+                  type="text"
+                  value={roleName}
+                  onChange={(e) => setRoleName(e.target.value)}
+                  placeholder="Masukkan nama role..."
+                  disabled={isSystemAdminRole || isSaving}
+                  className="h-9 text-xs sm:text-sm font-semibold rounded-xl"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 self-end sm:self-auto">
+              {isSystemAdminRole && (
+                <Badge
+                  variant="secondary"
+                  className="gap-1 bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20 text-xs px-2.5 py-1 rounded-lg"
+                >
+                  <Lock className="size-3" />
+                  <span>Role Admin Utama</span>
+                </Badge>
+              )}
+
+              {role && !isCreatingNew && (
+                <Badge
+                  variant="outline"
+                  className="text-xs px-2.5 py-1 rounded-lg text-muted-foreground"
+                >
+                  {role.user_count || 0} Pengguna Aktif
+                </Badge>
+              )}
+            </div>
+          </div>
+
+          {/* Permission Search Bar & Bulk Actions */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-2 border-t border-border/70">
+            <div className="relative flex-1">
+              <Search className="size-3.5 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
+              <Input
+                type="text"
+                value={permSearch}
+                onChange={(e) => setPermSearch(e.target.value)}
+                placeholder="Cari modul atau izin..."
+                className="h-8.5 text-xs pl-8.5 rounded-xl"
+              />
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleEnableAllPermissions}
+                className="h-8.5 text-[11px] px-2.5 rounded-xl gap-1 text-muted-foreground hover:text-foreground cursor-pointer"
+              >
+                <CheckCheck className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span>Aktifkan Semua</span>
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleDisableAllPermissions}
+                className="h-8.5 text-[11px] px-2.5 rounded-xl gap-1 text-muted-foreground hover:text-foreground cursor-pointer"
+              >
+                <XCircle className="size-3.5 text-muted-foreground" />
+                <span>Nonaktifkan Semua</span>
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+      </Card>
+
+      {/* Permissions Matrix Sections */}
+      <div className="space-y-3.5">
+        {filteredModules.map(([moduleKey, config]) => {
+          const Icon = MODULE_ICONS[moduleKey] || Sparkles
+          const actionKeys = Object.keys(config.actions)
+          const modPermissions = permissions[moduleKey] || {}
+          const allEnabled = actionKeys.every((a) => !!modPermissions[a])
+
+          return (
+            <Card
+              key={moduleKey}
+              className="rounded-2xl border border-border shadow-xs bg-card/60 backdrop-blur-xs overflow-hidden"
+            >
+              <CardHeader className="p-4 pb-3 flex flex-row items-center justify-between space-y-0 border-b border-border/50 bg-muted/20">
+                <div className="flex items-center gap-2.5">
+                  <div className="size-8 rounded-xl bg-blue-600/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                    <Icon className="size-4" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xs sm:text-sm font-bold tracking-tight">
+                      {config.title}
+                    </CardTitle>
+                    <CardDescription className="text-[11px] line-clamp-1">
+                      {config.description}
+                    </CardDescription>
+                  </div>
+                </div>
+
+                {/* Toggle All in Module */}
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-[11px] font-medium text-muted-foreground hidden sm:inline">
+                    {allEnabled ? "Matikan Modul" : "Aktifkan Modul"}
+                  </span>
+                  <Switch
+                    checked={allEnabled}
+                    onCheckedChange={() => toggleAllModule(moduleKey, actionKeys)}
+                    title={allEnabled ? "Nonaktifkan seluruh izin modul" : "Aktifkan seluruh izin modul"}
+                  />
+                </div>
+              </CardHeader>
+
+              <CardContent className="p-3 divide-y divide-border/40">
+                {Object.entries(config.actions).map(([actionKey, actionConfig]) => {
+                  const isChecked = !!modPermissions[actionKey]
+
+                  return (
+                    <div
+                      key={actionKey}
+                      className="flex items-center justify-between py-2.5 px-2 rounded-xl transition-colors hover:bg-muted/40 gap-3"
+                    >
+                      <div className="min-w-0 flex flex-col">
+                        <span className="text-xs font-semibold text-foreground">
+                          {actionConfig.label}
+                        </span>
+                        <span className="text-[11px] text-muted-foreground">
+                          {actionConfig.description}
+                        </span>
+                      </div>
+
+                      <Switch
+                        checked={isChecked}
+                        onCheckedChange={() =>
+                          togglePermission(moduleKey, actionKey, actionKeys)
+                        }
+                      />
+                    </div>
+                  )
+                })}
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
+
+      {/* Sticky Action Footer */}
+      <div className="sticky bottom-4 z-20 flex items-center justify-between gap-3 p-3.5 rounded-2xl bg-card/90 border border-border shadow-lg backdrop-blur-md">
+        <div className="flex items-center gap-2">
+          {isDirty ? (
+            <Badge
+              variant="outline"
+              className="text-[11px] px-2 py-0.5 rounded-lg border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-medium"
+            >
+              Perubahan Belum Disimpan
+            </Badge>
+          ) : (
+            <span className="text-xs text-muted-foreground hidden sm:inline">
+              Data role tersimpan
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleReset}
+            disabled={!isDirty || isSaving}
+            className="rounded-xl h-9 px-3 text-xs gap-1.5 cursor-pointer"
+          >
+            <RotateCcw className="size-3.5" />
+            <span>Batal</span>
+          </Button>
+
+          <Button
+            type="button"
+            size="sm"
+            onClick={handleSaveRole}
+            disabled={isSaving || !roleName.trim()}
+            className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold cursor-pointer shadow-xs gap-1.5 text-xs h-9 px-4"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="size-3.5 animate-spin" />
+                <span>Menyimpan...</span>
+              </>
+            ) : (
+              <>
+                <Save className="size-3.5" />
+                <span>Simpan Perubahan</span>
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
     </div>
   )
 }

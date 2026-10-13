@@ -37,32 +37,37 @@ export function ColorPickerPopover({
   disabled = false,
 }: ColorPickerPopoverProps) {
   const [open, setOpen] = React.useState(false)
-  const [hexInput, setHexInput] = React.useState(color || "#3B82F6")
+  const [prevColor, setPrevColor] = React.useState(color)
+  const [customHex, setCustomHex] = React.useState<string | null>(null)
   const colorInputRef = React.useRef<HTMLInputElement>(null)
 
-  React.useEffect(() => {
-    setHexInput(color || "#3B82F6")
-  }, [color])
+  if (color !== prevColor) {
+    setPrevColor(color)
+    setCustomHex(null)
+  }
+
+  const hexInput = customHex ?? (color || "#3B82F6")
 
   const handleHexChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = e.target.value
     if (!val.startsWith("#") && val.length > 0) {
       val = "#" + val
     }
-    setHexInput(val)
+    setCustomHex(val)
     if (/^#[0-9A-Fa-f]{6}$/.test(val) || /^#[0-9A-Fa-f]{3}$/.test(val)) {
       onChange(val.toUpperCase())
+      setCustomHex(null)
     }
   }
 
   const handlePresetSelect = (preset: string) => {
-    setHexInput(preset)
+    setCustomHex(null)
     onChange(preset)
   }
 
   const handleNativeColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.toUpperCase()
-    setHexInput(val)
+    setCustomHex(null)
     onChange(val)
   }
 
