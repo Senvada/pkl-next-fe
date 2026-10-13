@@ -42,7 +42,12 @@ export function useCreateRole() {
     mutationFn: async (payload: CreateRolePayload): Promise<Role> => {
       return apiClient.post<Role>("/roles", payload)
     },
-    onSuccess: () => {
+    onSuccess: (newRole) => {
+      queryClient.setQueryData<Role[]>(ROLES_QUERY_KEY, (old = []) => {
+        if (!Array.isArray(old)) return [newRole]
+        if (old.some((r) => r.id === newRole.id)) return old
+        return [...old, newRole]
+      })
       queryClient.invalidateQueries({ queryKey: ROLES_QUERY_KEY })
     },
   })
@@ -61,7 +66,12 @@ export function useUpdateRole() {
     }): Promise<Role> => {
       return apiClient.put<Role>(`/roles/${id}`, payload)
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (updatedRole, variables) => {
+      queryClient.setQueryData<Role[]>(ROLES_QUERY_KEY, (old = []) => {
+        if (!Array.isArray(old)) return [updatedRole]
+        return old.map((r) => (r.id === updatedRole.id ? updatedRole : r))
+      })
+      queryClient.setQueryData([...ROLES_QUERY_KEY, variables.id], updatedRole)
       queryClient.invalidateQueries({ queryKey: ROLES_QUERY_KEY })
       queryClient.invalidateQueries({ queryKey: [...ROLES_QUERY_KEY, variables.id] })
     },
@@ -75,7 +85,12 @@ export function useDeleteRole() {
     mutationFn: async (id: string): Promise<void> => {
       await apiClient.delete(`/roles/${id}`)
     },
-    onSuccess: () => {
+    onSuccess: (_, deletedId) => {
+      queryClient.setQueryData<Role[]>(ROLES_QUERY_KEY, (old = []) => {
+        if (!Array.isArray(old)) return []
+        return old.filter((r) => r.id !== deletedId)
+      })
+      queryClient.removeQueries({ queryKey: [...ROLES_QUERY_KEY, deletedId] })
       queryClient.invalidateQueries({ queryKey: ROLES_QUERY_KEY })
     },
   })
