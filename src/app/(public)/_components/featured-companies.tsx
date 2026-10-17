@@ -38,7 +38,7 @@ export default function FeaturedCompanies() {
           <Link
             key={company.slug}
             href={`/companies/${company.slug}`}
-            className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 bg-white dark:border-white/10 dark:bg-[#16212D] transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-xl shadow-sm dark:shadow-none"
+            className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 bg-white dark:border-white/10 dark:bg-[#16212D] transition-[transform,border-color,box-shadow] duration-200 ease-out will-change-transform hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-xl shadow-sm dark:shadow-none"
           >
             {/* Banner with Logo Overlay */}
             <div className="relative h-36 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
@@ -46,7 +46,7 @@ export default function FeaturedCompanies() {
                 src={company.bannerImage}
                 alt={company.name}
                 fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                className="object-cover transition-transform duration-300 ease-out will-change-transform group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
 

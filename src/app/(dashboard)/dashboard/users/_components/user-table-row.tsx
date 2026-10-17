@@ -18,7 +18,7 @@ function getInitials(name: string) {
   return name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()
 }
 
-export function UserTableRow({
+export const UserTableRow = React.memo(function UserTableRow({
   user,
   isSelf,
   isUserAdmin,
@@ -151,4 +151,4 @@ export function UserTableRow({
       </td>
     </tr>
   )
-}
+})

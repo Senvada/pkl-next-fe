@@ -55,7 +55,7 @@ export function NavbarMobile({ user, activeIndex, isHomeTop }: NavbarMobileProps
                   <Link
                     href={item.target}
                     className={cn(
-                      "group flex items-center gap-3 rounded-xl px-4 py-3 text-left transition-all duration-200",
+                      "group flex items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors duration-150 ease-out",
                       isActive
                         ? "bg-blue-600 text-white font-bold shadow-md shadow-blue-600/20"
                         : "text-foreground/80 hover:bg-muted hover:text-foreground"

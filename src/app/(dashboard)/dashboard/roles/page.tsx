@@ -50,7 +50,7 @@ export default function RolesManagementPage() {
 
       {pageNotice && (
         <div
-          className={`shrink-0 mb-3 flex items-center justify-between gap-2 p-2.5 sm:p-3 text-xs rounded-xl border transition-all ${
+          className={`shrink-0 mb-3 flex items-center justify-between gap-2 p-2.5 sm:p-3 text-xs rounded-xl border transition-colors duration-150 ${
             pageNotice.type === "success"
               ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20"
               : "bg-destructive/10 text-destructive border-destructive/20"

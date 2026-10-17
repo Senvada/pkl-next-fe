@@ -186,7 +186,7 @@ export default function LoginForm({
           type="submit"
           disabled={isLoading}
           size="lg"
-          className="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold shadow-lg shadow-blue-600/30 transition-all cursor-pointer flex items-center justify-center gap-2 mt-2"
+          className="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold shadow-lg shadow-blue-600/30 transition-[background-color,transform,box-shadow] duration-150 ease-out cursor-pointer active:scale-[0.98] flex items-center justify-center gap-2 mt-2"
         >
           {isLoading ? (
             <>

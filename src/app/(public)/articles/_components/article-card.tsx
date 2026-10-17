@@ -5,14 +5,14 @@ import { Calendar, Clock, ArrowUpRight } from "lucide-react";
 
 export default function ArticleCard({ article }: { article: Article }) {
   return (
-    <article className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 bg-white dark:border-white/10 dark:bg-[#16212D] transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/30 hover:shadow-xl shadow-xs dark:shadow-none">
+    <article className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 bg-white dark:border-white/10 dark:bg-[#16212D] transition-[transform,border-color,box-shadow] duration-200 ease-out will-change-transform hover:-translate-y-1 hover:border-blue-500/30 hover:shadow-xl shadow-xs dark:shadow-none">
       {/* Cover Image */}
       <div className="relative h-48 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
         <Image
           src={article.coverImage}
           alt={article.title}
           fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          className="object-cover transition-transform duration-300 ease-out will-change-transform group-hover:scale-105"
         />
         <div className="absolute top-3 left-3">
           <span className="rounded-md bg-blue-600/90 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-md">
@@ -69,7 +69,7 @@ export default function ArticleCard({ article }: { article: Article }) {
 
           <Link
             href={`/articles/${article.slug}`}
-            className="flex size-8 items-center justify-center rounded-lg bg-slate-100 text-slate-700 dark:bg-white/5 dark:text-slate-300 group-hover:bg-blue-600 group-hover:text-white transition shrink-0 ml-2"
+            className="flex size-8 items-center justify-center rounded-lg bg-slate-100 text-slate-700 dark:bg-white/5 dark:text-slate-300 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-150 ease-out shrink-0 ml-2"
             aria-label={`Baca ${article.title}`}
           >
             <ArrowUpRight className="size-4" />

@@ -23,7 +23,7 @@ interface RoleEditorHeaderProps {
   onDisableAll: () => void
 }
 
-export function RoleEditorHeader({
+export const RoleEditorHeader = React.memo(function RoleEditorHeader({
   role,
   roleName,
   onRoleNameChange,
@@ -135,4 +135,4 @@ export function RoleEditorHeader({
       </div>
     </CardHeader>
   )
-}
+})

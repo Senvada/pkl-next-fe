@@ -47,7 +47,7 @@ export default function HeroBanner() {
             <Button
               asChild
               size="lg"
-              className="w-full sm:w-auto h-12 px-8 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold shadow-lg shadow-blue-600/30 transition-all cursor-pointer"
+              className="w-full sm:w-auto h-12 px-8 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold shadow-lg shadow-blue-600/30 transition-[background-color,transform,box-shadow] duration-150 ease-out cursor-pointer active:scale-[0.98]"
             >
               <Link href="/companies" className="flex items-center gap-2">
                 <Building2 className="size-5" />

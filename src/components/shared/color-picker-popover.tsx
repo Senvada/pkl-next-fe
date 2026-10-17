@@ -77,7 +77,7 @@ export function ColorPickerPopover({
         <button
           type="button"
           disabled={disabled}
-          className="group relative flex size-9 shrink-0 items-center justify-center rounded-xl border border-border shadow-xs transition-all hover:scale-105 hover:ring-2 hover:ring-blue-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+          className="group relative flex size-9 shrink-0 items-center justify-center rounded-xl border border-border shadow-xs transition-transform duration-150 ease-out will-change-transform hover:scale-105 hover:ring-2 hover:ring-blue-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
           style={{ backgroundColor: color || "#3B82F6" }}
           title="Pilih warna tema role"
         >
@@ -108,7 +108,7 @@ export function ColorPickerPopover({
                 key={preset}
                 type="button"
                 onClick={() => handlePresetSelect(preset)}
-                className="relative size-6 rounded-md border border-black/10 dark:border-white/10 transition-transform hover:scale-110 flex items-center justify-center cursor-pointer shadow-xs"
+                className="relative size-6 rounded-md border border-black/10 dark:border-white/10 transition-transform duration-150 ease-out will-change-transform hover:scale-110 flex items-center justify-center cursor-pointer shadow-xs"
                 style={{ backgroundColor: preset }}
                 title={preset}
               >

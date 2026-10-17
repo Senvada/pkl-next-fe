@@ -103,7 +103,7 @@ export default function SidebarFooterSection({
                 </AvatarFallback>
               </Avatar>
 
-              <div className="grid flex-1 text-left text-xs leading-tight transition-opacity duration-200 group-data-[collapsible=icon]:hidden">
+              <div className="grid flex-1 text-left text-xs leading-tight transition-opacity duration-150 ease-out group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:overflow-hidden">
                 <span className="truncate font-semibold text-sidebar-foreground">
                   {user.name}
                 </span>
@@ -112,7 +112,7 @@ export default function SidebarFooterSection({
                 </span>
               </div>
 
-              <ChevronsUpDown className="ml-auto size-4 text-sidebar-foreground/50 transition-opacity duration-200 group-data-[collapsible=icon]:hidden" />
+              <ChevronsUpDown className="ml-auto size-4 text-sidebar-foreground/50 transition-opacity duration-150 ease-out group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:hidden" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
 

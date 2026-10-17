@@ -47,7 +47,7 @@ export function ThemeToggle({
       size="icon"
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className={cn(
-        "size-9 rounded-full transition-all cursor-pointer",
+        "size-9 rounded-full transition-colors duration-150 ease-out cursor-pointer",
         isDark
           ? "text-amber-400 hover:text-amber-300 hover:bg-white/10"
           : isTransparent
@@ -59,9 +59,9 @@ export function ThemeToggle({
       aria-label="Ganti Tema"
     >
       {isDark ? (
-        <Sun className="size-4.5 rotate-0 transition-transform duration-300" />
+        <Sun className="size-4.5 rotate-0 transition-transform duration-200 ease-out" />
       ) : (
-        <Moon className="size-4.5 rotate-0 transition-transform duration-300" />
+        <Moon className="size-4.5 rotate-0 transition-transform duration-200 ease-out" />
       )}
     </Button>
   );

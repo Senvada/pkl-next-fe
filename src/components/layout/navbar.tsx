@@ -32,16 +32,26 @@ const Navbar = ({ user: propUser = null }: NavbarProps) => {
   const isHomeTop = pathname === "/" && !scrolled;
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 10);
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const isScrolled = window.scrollY > 10;
+          setScrolled((prev) => (prev !== isScrolled ? isScrolled : prev));
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
     handleScroll();
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <header
       className={cn(
-        "fixed top-0 z-9999 flex h-14 w-full justify-between transition-all duration-300 sm:h-18 items-center",
+        "fixed top-0 z-9999 flex h-14 w-full justify-between transition-[background-color,border-color,color,box-shadow,backdrop-filter] duration-200 ease-out sm:h-18 items-center",
         isHomeTop
           ? "bg-transparent text-white"
           : "bg-white/85 text-slate-900 shadow-xs backdrop-blur-md dark:bg-[#1A2634]/90 dark:text-white"

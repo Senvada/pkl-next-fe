@@ -33,7 +33,7 @@ export default function PklWorkflow() {
             return (
               <div
                 key={workflow.step}
-                className="relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 bg-white dark:border-white/10 dark:bg-[#16212D] p-6 transition-all duration-300 hover:border-blue-500/40 shadow-xs dark:shadow-lg group"
+                className="relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 bg-white dark:border-white/10 dark:bg-[#16212D] p-6 transition-[border-color,box-shadow] duration-200 ease-out hover:border-blue-500/40 shadow-xs dark:shadow-lg group"
               >
                 {/* Step Badge and Icon */}
                 <div>
@@ -41,7 +41,7 @@ export default function PklWorkflow() {
                     <span className="flex size-9 items-center justify-center rounded-xl bg-blue-500/10 text-xs font-bold text-blue-600 dark:text-blue-400 border border-blue-500/20">
                       0{workflow.step}
                     </span>
-                    <div className="flex size-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    <div className="flex size-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-150 ease-out">
                       <Icon className="size-5" />
                     </div>
                   </div>

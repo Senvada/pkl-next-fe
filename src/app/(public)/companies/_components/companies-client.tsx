@@ -104,7 +104,7 @@ export default function CompaniesClient({
           </span>
           <button
             onClick={() => setSelectedDept("ALL")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-150 ease-out cursor-pointer ${
               selectedDept === "ALL"
                 ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
                 : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/80 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:border-white/10"
@@ -122,7 +122,7 @@ export default function CompaniesClient({
               <button
                 key={dept.id}
                 onClick={() => setSelectedDept(dept.code)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-150 ease-out cursor-pointer flex items-center gap-1.5 ${
                   isSelected
                     ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
                     : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/80 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:border-white/10"

@@ -41,12 +41,12 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-200">
+      <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
           enableSystem
-          disableTransitionOnChange={false}
+          disableTransitionOnChange
         >
           <QueryProvider>{children}</QueryProvider>
         </ThemeProvider>

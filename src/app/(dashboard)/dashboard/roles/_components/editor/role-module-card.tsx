@@ -14,7 +14,7 @@ interface RoleModuleCardProps {
   onTogglePermission: (moduleKey: string, actionKey: string, actions: string[]) => void
 }
 
-export function RoleModuleCard({
+export const RoleModuleCard = React.memo(function RoleModuleCard({
   moduleKey,
   config,
   modPermissions,
@@ -87,4 +87,4 @@ export function RoleModuleCard({
       </CardContent>
     </Card>
   )
-}
+})

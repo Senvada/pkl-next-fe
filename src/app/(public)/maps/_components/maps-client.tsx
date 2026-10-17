@@ -103,7 +103,7 @@ export default function MapsClient({
         <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
           <button
             onClick={() => setSelectedDept("ALL")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors duration-150 ease-out cursor-pointer ${
               selectedDept === "ALL"
                 ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
                 : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/80 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:border-white/10"
@@ -115,7 +115,7 @@ export default function MapsClient({
             <button
               key={dept.id}
               onClick={() => setSelectedDept(dept.code)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors duration-150 ease-out cursor-pointer ${
                 selectedDept === dept.code
                   ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
                   : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/80 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:border-white/10"
@@ -167,7 +167,7 @@ export default function MapsClient({
                 <div
                   key={comp.id}
                   onClick={() => setSelectedCompany(comp)}
-                  className={`p-3.5 rounded-2xl border transition-all cursor-pointer ${
+                  className={`p-3.5 rounded-2xl border transition-colors duration-150 ease-out cursor-pointer ${
                     isSelected
                       ? "border-blue-500 bg-blue-50 dark:bg-blue-500/10 shadow-xs"
                       : "border-slate-100 bg-slate-50/80 hover:bg-slate-100 dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10"

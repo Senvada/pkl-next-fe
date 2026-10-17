@@ -6,7 +6,7 @@ export default function SidebarHeaderSection() {
   return (
     <Link
       href="/dashboard"
-      className="flex items-center group-data-[collapsible=icon]:gap-0 gap-2.5 rounded-xl group-data-[collapsible=icon]:px-0 px-2 py-1.5 transition-all hover:bg-sidebar-accent"
+      className="flex items-center group-data-[collapsible=icon]:gap-0 gap-2.5 rounded-xl group-data-[collapsible=icon]:px-0 px-2 py-1.5 transition-colors duration-150 ease-out hover:bg-sidebar-accent"
     >
       <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 p-1.5 border border-blue-500/20">
         <Image
@@ -19,7 +19,7 @@ export default function SidebarHeaderSection() {
         />
       </div>
 
-      <div className="flex flex-col text-left transition-opacity duration-200 group-data-[collapsible=icon]:hidden">
+      <div className="flex flex-col text-left transition-opacity duration-150 ease-out group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:overflow-hidden">
         <span className="text-xs font-black tracking-wider uppercase text-sidebar-foreground">
           PKL SMKN 6
         </span>

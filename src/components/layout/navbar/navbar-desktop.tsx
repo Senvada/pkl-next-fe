@@ -32,7 +32,7 @@ export function NavbarDesktop({ user, activeIndex, isHomeTop }: NavbarDesktopPro
               key={item.index}
               href={item.target}
               className={cn(
-                "flex items-center gap-1.5 border-b-2 py-1 text-sm font-semibold transition-all duration-200",
+                "flex items-center gap-1.5 border-b-2 py-1 text-sm font-semibold transition-colors duration-150 ease-out",
                 isHomeTop
                   ? isActive
                     ? "border-blue-400 text-blue-300"

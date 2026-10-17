@@ -92,7 +92,7 @@ export function RoleEditor({
     }
   }
 
-  const togglePermission = (module: string, action: string, actions: string[]) => {
+  const togglePermission = React.useCallback((module: string, action: string, actions: string[]) => {
     setPermissions((prev) => {
       const currentMod = prev[module] || {}
       const newValue = !currentMod[action]
@@ -105,15 +105,15 @@ export function RoleEditor({
       }
       return { ...prev, [module]: { ...currentMod, [action]: newValue } }
     })
-  }
+  }, [])
 
-  const toggleAllModule = (module: string, actions: string[]) => {
+  const toggleAllModule = React.useCallback((module: string, actions: string[]) => {
     setPermissions((prev) => {
       const currentMod = prev[module] || {}
       const allActive = actions.every((a) => !!currentMod[a])
       return { ...prev, [module]: Object.fromEntries(actions.map((a) => [a, !allActive])) }
     })
-  }
+  }, [])
 
   const handleSaveRole = async () => {
     setNotice(null)
@@ -188,7 +188,7 @@ export function RoleEditor({
       <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-3.5 sm:p-4 space-y-3">
         {notice && (
           <div
-            className={`flex items-center justify-between gap-2 p-2.5 sm:p-3 text-xs rounded-xl border transition-all ${
+            className={`flex items-center justify-between gap-2 p-2.5 sm:p-3 text-xs rounded-xl border transition-colors duration-150 ${
               notice.type === "success"
                 ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20"
                 : "bg-destructive/10 text-destructive border-destructive/20"

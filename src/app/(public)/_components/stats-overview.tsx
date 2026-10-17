@@ -12,10 +12,10 @@ export default function StatsOverview() {
           return (
             <div
               key={stat.label}
-              className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 dark:border-white/10 dark:bg-[#16212D]/90 p-5 sm:p-6 backdrop-blur-xl transition duration-300 hover:border-blue-500/40 hover:shadow-xl shadow-md shadow-slate-200/50 dark:shadow-none"
+              className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 dark:border-white/10 dark:bg-[#16212D]/90 p-5 sm:p-6 transition-[border-color,box-shadow] duration-200 ease-out hover:border-blue-500/40 hover:shadow-xl shadow-md shadow-slate-200/50 dark:shadow-none"
             >
               <div className="flex items-center justify-between">
-                <div className="flex size-10 sm:size-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
+                <div className="flex size-10 sm:size-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-200 ease-out will-change-transform">
                   <Icon className="size-5 sm:size-6" />
                 </div>
               </div>

@@ -11,14 +11,14 @@ interface UserNoticeProps {
   onClose: () => void
 }
 
-export function UserNotice({ notice, onClose }: UserNoticeProps) {
+export const UserNotice = React.memo(function UserNotice({ notice, onClose }: UserNoticeProps) {
   if (!notice) return null
 
   const isSuccess = notice.type === "success"
 
   return (
     <div
-      className={`shrink-0 flex items-center justify-between gap-2 p-3 text-xs rounded-xl border transition-all ${
+      className={`shrink-0 flex items-center justify-between gap-2 p-3 text-xs rounded-xl border transition-colors duration-150 ease-out ${
         isSuccess
           ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20"
           : "bg-destructive/10 text-destructive border-destructive/20"
@@ -41,4 +41,4 @@ export function UserNotice({ notice, onClose }: UserNoticeProps) {
       </button>
     </div>
   )
-}
+})
