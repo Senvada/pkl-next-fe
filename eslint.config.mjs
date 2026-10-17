@@ -13,6 +13,14 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: [
+      "src/components/ui/**",
+      "src/lib/mock-data.ts",
+      "src/types/**",
+    ],
+  },
 ]);
 
 export default eslintConfig;
