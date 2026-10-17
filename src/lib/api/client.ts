@@ -5,6 +5,7 @@ import type { ApiResponse } from "@/types/auth"
 export type RequestOptions = RequestInit & {
   auth?: boolean
   skipRefresh?: boolean
+  raw?: boolean
 }
 
 /**
@@ -135,7 +136,7 @@ export async function apiFetch<T>(
     }
 
     // Return the data payload if wrapped in standard ApiResponse envelope
-    if (responseData && typeof responseData === "object" && "data" in responseData) {
+    if (!options.raw && responseData && typeof responseData === "object" && "data" in responseData) {
       return responseData.data as T
     }
 
@@ -154,6 +155,17 @@ export async function apiFetch<T>(
 export const apiClient = {
   get<T>(endpoint: string, options?: RequestOptions): Promise<T> {
     return apiFetch<T>(endpoint, { method: "GET", ...options })
+  },
+
+  getPaginated<T>(
+    endpoint: string,
+    options?: RequestOptions
+  ): Promise<ApiResponse<T[]>> {
+    return apiFetch<ApiResponse<T[]>>(endpoint, {
+      method: "GET",
+      raw: true,
+      ...options,
+    })
   },
 
   post<T>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<T> {
