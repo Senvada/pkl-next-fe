@@ -19,11 +19,7 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
-  UserCheck,
-  UserX,
   Mail,
-  Calendar,
-  Layers,
 } from "lucide-react"
 
 import {
@@ -43,8 +39,6 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import {
   Card,
-  CardHeader,
-  CardTitle,
   CardContent,
 } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -120,7 +114,7 @@ export default function UserManagementPage() {
     filter: filterPayload,
   })
 
-  const users = queryResult?.users || []
+  const users = React.useMemo(() => queryResult?.users ?? [], [queryResult?.users])
   const pagination = queryResult?.pagination
 
   // Mutations
