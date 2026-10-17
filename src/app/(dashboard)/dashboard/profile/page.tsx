@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import Link from "next/link"
 import { Pencil } from "lucide-react"
 import { useProfileQuery } from "@/hooks/modules/profile"
@@ -10,12 +11,15 @@ import { ProfileSummaryCard } from "./_components/profile-summary-card"
 import { ProfileIdentityCard } from "./_components/profile-identity-card"
 import { ProfileSecurityCard } from "./_components/profile-security-card"
 
+const emptySubscribe = () => () => {}
+
 export default function ProfilePage() {
+  const mounted = React.useSyncExternalStore(emptySubscribe, () => true, () => false)
   const { data: profile, isLoading } = useProfileQuery()
   const cachedUser = useCurrentUser()
-  const user = profile || cachedUser
+  const user = profile || (mounted ? cachedUser : null)
 
-  if (isLoading && !user) {
+  if (!mounted || (isLoading && !user)) {
     return (
       <div className="space-y-6 max-w-5xl mx-auto">
         <div className="space-y-2">

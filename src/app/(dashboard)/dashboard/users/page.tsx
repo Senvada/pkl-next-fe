@@ -53,8 +53,18 @@ export default function UserManagementPage() {
   const isBusy = createUserMutation.isPending || updateUserMutation.isPending || deleteUserMutation.isPending
 
   const [pageNotice, setPageNotice] = React.useState<PageNotice | null>(null)
+  const handleCloseNotice = React.useCallback(() => setPageNotice(null), [])
 
-  const handleSaveUser = async ({
+  const editingUser = dialogs.editingUser
+  const userToDelete = dialogs.userToDelete
+  const setDeleteDialogOpen = dialogs.setDeleteDialogOpen
+  const setUserToDelete = dialogs.setUserToDelete
+  const isDeletePending = deleteUserMutation.isPending
+  const mutateUpdateUser = updateUserMutation.mutateAsync
+  const mutateCreateUser = createUserMutation.mutateAsync
+  const mutateDeleteUser = deleteUserMutation.mutateAsync
+
+  const handleSaveUser = React.useCallback(async ({
     isEdit,
     payload,
     name,
@@ -63,27 +73,27 @@ export default function UserManagementPage() {
     payload: CreateUserPayload | UpdateUserPayload
     name: string
   }) => {
-    if (isEdit && dialogs.editingUser) {
-      await updateUserMutation.mutateAsync({ id: dialogs.editingUser.id, payload: payload as UpdateUserPayload })
+    if (isEdit && editingUser) {
+      await mutateUpdateUser({ id: editingUser.id, payload: payload as UpdateUserPayload })
       setPageNotice({ type: "success", text: `Data pengguna "${name}" berhasil diperbarui.` })
     } else {
-      await createUserMutation.mutateAsync(payload as CreateUserPayload)
+      await mutateCreateUser(payload as CreateUserPayload)
       setPageNotice({ type: "success", text: `Pengguna baru "${name}" berhasil ditambahkan.` })
     }
-  }
+  }, [editingUser, mutateUpdateUser, mutateCreateUser])
 
-  const handleConfirmDelete = async () => {
-    if (!dialogs.userToDelete || deleteUserMutation.isPending) return
+  const handleConfirmDelete = React.useCallback(async () => {
+    if (!userToDelete || isDeletePending) return
     try {
-      await deleteUserMutation.mutateAsync(dialogs.userToDelete.id)
-      setPageNotice({ type: "success", text: `Pengguna "${dialogs.userToDelete.name}" berhasil dihapus.` })
-      dialogs.setDeleteDialogOpen(false)
-      dialogs.setUserToDelete(null)
+      await mutateDeleteUser(userToDelete.id)
+      setPageNotice({ type: "success", text: `Pengguna "${userToDelete.name}" berhasil dihapus.` })
+      setDeleteDialogOpen(false)
+      setUserToDelete(null)
     } catch (err) {
       setPageNotice({ type: "error", text: err instanceof Error ? err.message : "Gagal menghapus pengguna." })
-      dialogs.setDeleteDialogOpen(false)
+      setDeleteDialogOpen(false)
     }
-  }
+  }, [userToDelete, isDeletePending, mutateDeleteUser, setDeleteDialogOpen, setUserToDelete])
 
   const metrics = React.useMemo(() => {
     const total = pagination?.total_rows ?? users.length
@@ -98,7 +108,7 @@ export default function UserManagementPage() {
   return (
     <div className="flex-1 min-h-0 flex flex-col w-full max-w-7xl mx-auto space-y-4">
       <UserHeader onOpenCreate={dialogs.handleOpenCreate} disabled={isBusy} />
-      <UserNotice notice={pageNotice} onClose={() => setPageNotice(null)} />
+      <UserNotice notice={pageNotice} onClose={handleCloseNotice} />
       <UserMetrics metrics={metrics} mounted={mounted} />
 
       <UserFilterBar

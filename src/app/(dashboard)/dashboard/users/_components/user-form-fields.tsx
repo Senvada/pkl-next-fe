@@ -27,7 +27,7 @@ interface UserFormFieldsProps {
   isIndustri: boolean
 }
 
-export function UserFormFields({
+export const UserFormFields = React.memo(function UserFormFields({
   formName,
   setFormName,
   formEmail,
@@ -164,4 +164,4 @@ export function UserFormFields({
       </div>
     </div>
   )
-}
+})

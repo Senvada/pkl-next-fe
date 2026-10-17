@@ -10,7 +10,7 @@ interface ProfileSecurityCardProps {
   user: UserProfile | null | undefined
 }
 
-export function ProfileSecurityCard({ user }: ProfileSecurityCardProps) {
+export const ProfileSecurityCard = React.memo(function ProfileSecurityCard({ user }: ProfileSecurityCardProps) {
   return (
     <div className="space-y-6">
       <Card className="rounded-2xl border border-border shadow-xs bg-card/60">
@@ -67,4 +67,4 @@ export function ProfileSecurityCard({ user }: ProfileSecurityCardProps) {
       </Card>
     </div>
   )
-}
+})

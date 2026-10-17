@@ -9,12 +9,15 @@ import { ProfileAvatarCard } from "./_components/profile-avatar-card"
 import { ProfileInfoForm } from "./_components/profile-info-form"
 import { ChangePasswordForm } from "./_components/change-password-form"
 
+const emptySubscribe = () => () => {}
+
 export default function EditProfilePage() {
+  const mounted = React.useSyncExternalStore(emptySubscribe, () => true, () => false)
   const { data: profile, isLoading } = useProfileQuery()
   const cachedUser = useCurrentUser()
-  const user = profile || cachedUser
+  const user = profile || (mounted ? cachedUser : null)
 
-  if (isLoading && !user) {
+  if (!mounted || (isLoading && !user)) {
     return (
       <div className="space-y-6 max-w-4xl mx-auto">
         <Skeleton className="h-8 w-48 rounded-lg" />

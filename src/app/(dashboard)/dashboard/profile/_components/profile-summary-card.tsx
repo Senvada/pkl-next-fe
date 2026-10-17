@@ -9,13 +9,13 @@ interface ProfileSummaryCardProps {
   user: UserProfile | null | undefined
 }
 
-export function ProfileSummaryCard({ user }: ProfileSummaryCardProps) {
+export const ProfileSummaryCard = React.memo(function ProfileSummaryCard({ user }: ProfileSummaryCardProps) {
   const initials = user?.name
     ? user.name.split(" ").slice(0, 2).map((n) => n[0]).join("").toUpperCase()
     : "U"
 
   return (
-    <Card className="rounded-2xl border border-border shadow-xs bg-card/60 backdrop-blur-xs">
+    <Card className="rounded-2xl border border-border shadow-xs bg-card/60">
       <CardContent className="p-6">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
           <div className="relative group">
@@ -76,4 +76,4 @@ export function ProfileSummaryCard({ user }: ProfileSummaryCardProps) {
       </CardContent>
     </Card>
   )
-}
+})
