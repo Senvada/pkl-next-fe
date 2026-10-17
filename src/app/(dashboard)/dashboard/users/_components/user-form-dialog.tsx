@@ -183,27 +183,39 @@ function UserFormContent({
   )
 }
 
-export const UserFormDialog = React.memo(function UserFormDialog(props: UserFormDialogProps) {
+export const UserFormDialog = React.memo(function UserFormDialog({
+  open,
+  onOpenChange,
+  editingUser,
+  roles,
+  departments,
+  companies,
+  isAdmin,
+  isIndustri,
+  myCompanyId,
+  isSaving,
+  onSave,
+}: UserFormDialogProps) {
   const handleClose = React.useCallback(() => {
-    props.onOpenChange(false)
-  }, [props.onOpenChange])
+    onOpenChange(false)
+  }, [onOpenChange])
 
   return (
-    <Dialog open={props.open} onOpenChange={props.onOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg rounded-2xl shadow-none">
-        {props.open && (
+        {open && (
           <UserFormContent
-            key={props.editingUser?.id ?? "new-user"}
-            editingUser={props.editingUser}
-            roles={props.roles}
-            departments={props.departments}
-            companies={props.companies}
-            isAdmin={props.isAdmin}
-            isIndustri={props.isIndustri}
-            myCompanyId={props.myCompanyId}
-            isSaving={props.isSaving}
+            key={editingUser?.id ?? "new-user"}
+            editingUser={editingUser}
+            roles={roles}
+            departments={departments}
+            companies={companies}
+            isAdmin={isAdmin}
+            isIndustri={isIndustri}
+            myCompanyId={myCompanyId}
+            isSaving={isSaving}
             onClose={handleClose}
-            onSave={props.onSave}
+            onSave={onSave}
           />
         )}
       </DialogContent>
