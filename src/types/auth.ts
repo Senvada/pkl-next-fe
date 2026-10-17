@@ -26,6 +26,15 @@ export interface LoginFormData {
   remember: boolean;
 }
 
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  total_rows: number;
+  total_pages: number;
+  has_next: boolean;
+  has_prev: boolean;
+}
+
 export interface ApiResponse<T = unknown> {
   success: boolean;
   message: string;
@@ -34,5 +43,6 @@ export interface ApiResponse<T = unknown> {
   meta: {
     request_id: string;
     timestamp: string;
+    pagination?: PaginationMeta;
   };
 }
