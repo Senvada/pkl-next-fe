@@ -12,8 +12,8 @@ export function LoginHelpModal({ open, onClose }: LoginHelpModalProps) {
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-white/10 dark:bg-[#16212D] text-slate-900 dark:text-white space-y-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 animate-in fade-in duration-150">
+      <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-white/10 dark:bg-[#16212D] text-slate-900 dark:text-white space-y-4 animate-in zoom-in-95 duration-150 will-change-transform">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 font-bold text-base">
             <HelpCircle className="size-5 text-blue-600 dark:text-blue-400" />

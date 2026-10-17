@@ -38,7 +38,7 @@ export default function LatestArticles() {
           <Link
             key={art.slug}
             href={`/articles/${art.slug}`}
-            className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white dark:border-white/10 dark:bg-[#16212D] transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/30 hover:shadow-xl shadow-sm dark:shadow-none"
+            className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white dark:border-white/10 dark:bg-[#16212D] transition-[transform,border-color,box-shadow] duration-200 ease-out will-change-transform hover:-translate-y-1 hover:border-blue-500/30 hover:shadow-xl shadow-sm dark:shadow-none"
           >
             {/* Image */}
             <div className="relative h-48 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
@@ -46,7 +46,7 @@ export default function LatestArticles() {
                 src={art.coverImage}
                 alt={art.title}
                 fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                className="object-cover transition-transform duration-300 ease-out will-change-transform group-hover:scale-105"
               />
               <div className="absolute top-3 left-3">
                 <span className="rounded-md bg-blue-600/90 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-md">

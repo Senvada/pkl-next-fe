@@ -14,7 +14,7 @@ interface UserMetricsProps {
   mounted: boolean
 }
 
-export function UserMetrics({ metrics, mounted }: UserMetricsProps) {
+export const UserMetrics = React.memo(function UserMetrics({ metrics, mounted }: UserMetricsProps) {
   const cards = [
     {
       label: "Total Akun Terdaftar",
@@ -66,4 +66,4 @@ export function UserMetrics({ metrics, mounted }: UserMetricsProps) {
       })}
     </div>
   )
-}
+})

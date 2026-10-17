@@ -9,7 +9,7 @@ interface UserPaginationProps {
   onPageChange: (page: number) => void
 }
 
-export function UserPagination({ pagination, isBusy, onPageChange }: UserPaginationProps) {
+export const UserPagination = React.memo(function UserPagination({ pagination, isBusy, onPageChange }: UserPaginationProps) {
   if (!pagination || pagination.total_pages <= 1) return null
 
   const from = (pagination.page - 1) * pagination.limit + 1
@@ -52,4 +52,4 @@ export function UserPagination({ pagination, isBusy, onPageChange }: UserPaginat
       </div>
     </div>
   )
-}
+})

@@ -40,7 +40,7 @@ export default function ArticlesClient({ articles }: ArticlesClientProps) {
             <button
               key={cat}
               onClick={() => setCategory(cat)}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-150 ease-out cursor-pointer ${
                 category === cat
                   ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
                   : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/80 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:border-white/10"

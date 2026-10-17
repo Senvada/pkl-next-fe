@@ -26,7 +26,7 @@ interface UserFilterBarProps {
   isAdmin: boolean
 }
 
-export function UserFilterBar({
+export const UserFilterBar = React.memo(function UserFilterBar({
   searchTerm,
   onSearchChange,
   filterRole,
@@ -135,4 +135,4 @@ export function UserFilterBar({
       </CardContent>
     </Card>
   )
-}
+})

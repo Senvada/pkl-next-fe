@@ -52,7 +52,7 @@ export default function CompanySidebar({ company }: { company: Company }) {
           onClick={() => setApplied(true)}
           disabled={applied}
           size="lg"
-          className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold shadow-lg shadow-blue-600/30 transition-all cursor-pointer"
+          className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold shadow-lg shadow-blue-600/30 transition-[background-color,transform,box-shadow] duration-150 ease-out cursor-pointer active:scale-[0.98]"
         >
           {applied ? (
             <span className="flex items-center gap-2">
@@ -106,7 +106,7 @@ export default function CompanySidebar({ company }: { company: Company }) {
           href={`https://maps.google.com/?q=${company.lat},${company.lng}`}
           target="_blank"
           rel="noreferrer"
-          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-xs font-semibold text-slate-700 dark:text-white transition"
+          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-xs font-semibold text-slate-700 dark:text-white transition-colors duration-150 ease-out"
         >
           <MapPin className="size-3.5 text-blue-600 dark:text-blue-400" />
           Buka Petunjuk Arah Google Maps <ExternalLink className="size-3" />

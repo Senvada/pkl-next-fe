@@ -7,7 +7,7 @@ interface UserHeaderProps {
   disabled?: boolean
 }
 
-export function UserHeader({ onOpenCreate, disabled }: UserHeaderProps) {
+export const UserHeader = React.memo(function UserHeader({ onOpenCreate, disabled }: UserHeaderProps) {
   return (
     <div className="shrink-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div className="flex items-center gap-2.5">
@@ -34,4 +34,4 @@ export function UserHeader({ onOpenCreate, disabled }: UserHeaderProps) {
       </Button>
     </div>
   )
-}
+})

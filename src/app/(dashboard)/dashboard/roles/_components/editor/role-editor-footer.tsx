@@ -11,7 +11,7 @@ interface RoleEditorFooterProps {
   onSave: () => void
 }
 
-export function RoleEditorFooter({
+export const RoleEditorFooter = React.memo(function RoleEditorFooter({
   isDirty,
   isSaving,
   canSave,
@@ -70,4 +70,4 @@ export function RoleEditorFooter({
       </div>
     </div>
   )
-}
+})

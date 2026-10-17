@@ -68,9 +68,9 @@ export default function PklBenefits() {
             return (
               <div
                 key={idx}
-                className="group rounded-2xl border border-slate-200/80 bg-white dark:border-white/5 dark:bg-[#17222E]/80 p-6 transition-all duration-300 hover:border-blue-500/30 hover:bg-slate-50 dark:hover:bg-[#1A2633] shadow-xs dark:shadow-none"
+                className="group rounded-2xl border border-slate-200/80 bg-white dark:border-white/5 dark:bg-[#17222E]/80 p-6 transition-[background-color,border-color] duration-200 ease-out hover:border-blue-500/30 hover:bg-slate-50 dark:hover:bg-[#1A2633] shadow-xs dark:shadow-none"
               >
-                <div className="flex size-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                <div className="flex size-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-[color,background-color,transform] duration-200 ease-out will-change-transform">
                   <Icon className="size-6" />
                 </div>
                 <h3 className="mt-5 text-lg font-bold text-slate-900 dark:text-white">
