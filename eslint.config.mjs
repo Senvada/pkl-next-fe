@@ -13,6 +13,24 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: [
+      "src/components/ui/**",
+      "src/lib/mock-data.ts",
+      "src/types/**",
+    ],
+    rules: {
+      "max-lines": [
+        "warn",
+        {
+          max: 150,
+          skipBlankLines: true,
+          skipComments: true,
+        },
+      ],
+    },
+  },
 ]);
 
 export default eslintConfig;
