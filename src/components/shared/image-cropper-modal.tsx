@@ -117,7 +117,7 @@ function ImageCropperModalContent({
   const loading = isSubmitting || isProcessing
 
   return (
-    <DialogContent className="sm:max-w-xl max-h-[95vh] flex flex-col p-5 gap-4 overflow-hidden">
+    <DialogContent className="sm:max-w-xl max-h-[95vh] flex flex-col p-5 gap-4 overflow-hidden shadow-none">
       <DialogHeader className="gap-1 text-left">
         <div className="flex items-center gap-2">
           <div className="flex size-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">

@@ -19,7 +19,7 @@ interface UserDeleteDialogProps {
   onConfirm: () => void
 }
 
-export function UserDeleteDialog({
+export const UserDeleteDialog = React.memo(function UserDeleteDialog({
   open,
   onOpenChange,
   user,
@@ -28,7 +28,7 @@ export function UserDeleteDialog({
 }: UserDeleteDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md rounded-2xl">
+      <DialogContent className="sm:max-w-md rounded-2xl shadow-none">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-destructive">
             <Trash2 className="size-5 shrink-0" />
@@ -78,4 +78,4 @@ export function UserDeleteDialog({
       </DialogContent>
     </Dialog>
   )
-}
+})

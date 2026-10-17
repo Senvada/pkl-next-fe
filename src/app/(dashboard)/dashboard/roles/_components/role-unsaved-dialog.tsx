@@ -20,7 +20,7 @@ interface RoleUnsavedDialogProps {
   onCancelDiscard: () => void
 }
 
-export function RoleUnsavedDialog({
+export const RoleUnsavedDialog = React.memo(function RoleUnsavedDialog({
   open,
   onOpenChange,
   isCreatingNew,
@@ -30,7 +30,7 @@ export function RoleUnsavedDialog({
 }: RoleUnsavedDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md rounded-2xl">
+      <DialogContent className="sm:max-w-md rounded-2xl shadow-none">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
             <AlertTriangle className="size-5 shrink-0" />
@@ -66,4 +66,4 @@ export function RoleUnsavedDialog({
       </DialogContent>
     </Dialog>
   )
-}
+})

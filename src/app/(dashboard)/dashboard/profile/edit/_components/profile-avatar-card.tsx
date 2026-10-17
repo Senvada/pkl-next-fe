@@ -100,7 +100,7 @@ export function ProfileAvatarCard({ user }: ProfileAvatarCardProps) {
             </Avatar>
 
             {uploadAvatarMutation.isPending && (
-              <div className="absolute inset-0 bg-background/80 rounded-2xl flex flex-col items-center justify-center gap-1 backdrop-blur-xs">
+              <div className="absolute inset-0 bg-background/90 rounded-2xl flex flex-col items-center justify-center gap-1">
                 <Loader2 className="size-6 animate-spin text-blue-600" />
                 <span className="text-[10px] font-medium text-muted-foreground">Mengunggah...</span>
               </div>

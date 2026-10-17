@@ -22,10 +22,10 @@ function getInitials(name: string) {
   return name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()
 }
 
-export function UserDetailDialog({ open, onOpenChange, user }: UserDetailDialogProps) {
+export const UserDetailDialog = React.memo(function UserDetailDialog({ open, onOpenChange, user }: UserDetailDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md rounded-2xl">
+      <DialogContent className="sm:max-w-md rounded-2xl shadow-none">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-foreground">
             <Eye className="size-5 text-blue-600" />
@@ -114,4 +114,4 @@ export function UserDetailDialog({ open, onOpenChange, user }: UserDetailDialogP
       </DialogContent>
     </Dialog>
   )
-}
+})

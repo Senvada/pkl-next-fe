@@ -183,10 +183,14 @@ function UserFormContent({
   )
 }
 
-export function UserFormDialog(props: UserFormDialogProps) {
+export const UserFormDialog = React.memo(function UserFormDialog(props: UserFormDialogProps) {
+  const handleClose = React.useCallback(() => {
+    props.onOpenChange(false)
+  }, [props.onOpenChange])
+
   return (
     <Dialog open={props.open} onOpenChange={props.onOpenChange}>
-      <DialogContent className="sm:max-w-lg rounded-2xl">
+      <DialogContent className="sm:max-w-lg rounded-2xl shadow-none">
         {props.open && (
           <UserFormContent
             key={props.editingUser?.id ?? "new-user"}
@@ -198,11 +202,11 @@ export function UserFormDialog(props: UserFormDialogProps) {
             isIndustri={props.isIndustri}
             myCompanyId={props.myCompanyId}
             isSaving={props.isSaving}
-            onClose={() => props.onOpenChange(false)}
+            onClose={handleClose}
             onSave={props.onSave}
           />
         )}
       </DialogContent>
     </Dialog>
   )
-}
+})

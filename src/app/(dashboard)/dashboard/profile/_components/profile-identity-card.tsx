@@ -7,7 +7,7 @@ interface ProfileIdentityCardProps {
   user: UserProfile | null | undefined
 }
 
-export function ProfileIdentityCard({ user }: ProfileIdentityCardProps) {
+export const ProfileIdentityCard = React.memo(function ProfileIdentityCard({ user }: ProfileIdentityCardProps) {
   return (
     <Card className="rounded-2xl border border-border shadow-xs bg-card/60">
       <CardHeader className="pb-3">
@@ -45,4 +45,4 @@ export function ProfileIdentityCard({ user }: ProfileIdentityCardProps) {
       </CardContent>
     </Card>
   )
-}
+})
