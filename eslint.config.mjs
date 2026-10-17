@@ -20,16 +20,6 @@ const eslintConfig = defineConfig([
       "src/lib/mock-data.ts",
       "src/types/**",
     ],
-    rules: {
-      "max-lines": [
-        "warn",
-        {
-          max: 150,
-          skipBlankLines: true,
-          skipComments: true,
-        },
-      ],
-    },
   },
 ]);
 
