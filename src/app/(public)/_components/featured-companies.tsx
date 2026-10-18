@@ -3,7 +3,7 @@ import Image from "next/image";
 import { COMPANIES, DEPARTMENTS } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, MapPin, Star, Users } from "lucide-react";
+import { ArrowRight, MapPin, Users } from "lucide-react";
 
 export default function FeaturedCompanies() {
   const featured = COMPANIES.slice(0, 4);
@@ -50,10 +50,10 @@ export default function FeaturedCompanies() {
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
 
-              {/* Rating Pill */}
-              <div className="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-1 text-xs font-semibold text-amber-400 backdrop-blur-md">
-                <Star className="size-3.5 fill-amber-400" />
-                <span>{company.rating}</span>
+              {/* City Pill */}
+              <div className="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-1 text-xs font-semibold text-white/90 backdrop-blur-md">
+                <MapPin className="size-3 text-rose-400" />
+                <span>{company.city}</span>
               </div>
             </div>
 

@@ -24,8 +24,8 @@ export interface Company {
   departments: string[]; // department codes
   openQuota: number;
   totalQuota: number;
-  rating: number;
-  reviewCount: number;
+  rating?: number;
+  reviewCount?: number;
   contactEmail: string;
   contactPhone: string;
   website: string;

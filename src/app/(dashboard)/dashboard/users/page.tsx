@@ -16,7 +16,7 @@ import { UserMetrics } from "./_components/user-metrics"
 import { UserFilterBar } from "./_components/user-filter-bar"
 import { UserTable } from "./_components/user-table"
 import { UserPagination } from "./_components/user-pagination"
-import { UserFormDialog } from "./_components/user-form-dialog"
+import { UserFormDrawer } from "./_components/user-form-drawer"
 import { UserDetailDialog } from "./_components/user-detail-dialog"
 import { UserDeleteDialog } from "./_components/user-delete-dialog"
 
@@ -148,7 +148,7 @@ export default function UserManagementPage() {
         <UserPagination pagination={pagination} isBusy={isBusy} onPageChange={filter.setPage} />
       </UserTable>
 
-      <UserFormDialog
+      <UserFormDrawer
         open={dialogs.formDialogOpen}
         onOpenChange={dialogs.setFormDialogOpen}
         editingUser={dialogs.editingUser}
