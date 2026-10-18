@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Company, DEPARTMENTS } from "@/lib/mock-data";
-import { MapPin, Star, Users, ArrowUpRight } from "lucide-react";
+import { MapPin, Users, ArrowUpRight } from "lucide-react";
 
 interface CompanyCardProps {
   company: Company;
@@ -20,11 +20,10 @@ export default function CompanyCard({ company }: CompanyCardProps) {
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
 
-        {/* Rating Pill */}
-        <div className="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-1 text-xs font-semibold text-amber-400 backdrop-blur-md">
-          <Star className="size-3.5 fill-amber-400" />
-          <span>{company.rating}</span>
-          <span className="text-[10px] text-slate-300">({company.reviewCount})</span>
+        {/* Status Pill */}
+        <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1 text-xs font-semibold text-emerald-400 backdrop-blur-md">
+          <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span>Mitra Aktif</span>
         </div>
 
         {/* Category Pill */}

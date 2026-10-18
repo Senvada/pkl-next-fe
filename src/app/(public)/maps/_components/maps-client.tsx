@@ -6,7 +6,6 @@ import { Company, Department } from "@/lib/mock-data";
 import {
   Search,
   Building2,
-  Star,
   ExternalLink,
   Navigation,
 } from "lucide-react";
@@ -183,10 +182,9 @@ export default function MapsClient({
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-1 rounded bg-black/5 dark:bg-black/40 px-1.5 py-0.5 text-[10px] font-semibold text-amber-500 dark:text-amber-400 shrink-0">
-                      <Star className="size-3 fill-amber-400" />
-                      <span>{comp.rating}</span>
-                    </div>
+                    <span className="inline-flex items-center gap-1 rounded bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700 dark:text-emerald-400 shrink-0">
+                      Aktif
+                    </span>
                   </div>
 
                   <p className="mt-2 text-[11px] text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">

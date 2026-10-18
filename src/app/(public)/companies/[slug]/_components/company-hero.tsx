@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Company, DEPARTMENTS } from "@/lib/mock-data";
-import { ArrowLeft, MapPin, Star, Globe } from "lucide-react";
+import { ArrowLeft, MapPin, Globe } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default function CompanyHero({ company }: { company: Company }) {
@@ -38,11 +38,10 @@ export default function CompanyHero({ company }: { company: Company }) {
                   <Badge className="bg-blue-600 text-white font-semibold">
                     {company.category}
                   </Badge>
-                  <div className="flex items-center gap-1 rounded-md bg-black/60 px-2.5 py-1 text-xs font-semibold text-amber-400 backdrop-blur-md">
-                    <Star className="size-3.5 fill-amber-400" />
-                    <span>{company.rating}</span>
-                    <span className="text-slate-300">({company.reviewCount} ulasan)</span>
-                  </div>
+                  <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 bg-emerald-500/10 backdrop-blur-md font-semibold">
+                    <span className="size-1.5 rounded-full bg-emerald-400 inline-block mr-1.5 animate-pulse" />
+                    Mitra Industri Terdaftar
+                  </Badge>
                 </div>
 
                 <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">

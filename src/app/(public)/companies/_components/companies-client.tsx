@@ -18,7 +18,7 @@ export default function CompaniesClient({
 }: CompaniesClientProps) {
   const [search, setSearch] = useState("");
   const [selectedDept, setSelectedDept] = useState<string>("ALL");
-  const [sortBy, setSortBy] = useState<"rating" | "quota" | "name">("rating");
+  const [sortBy, setSortBy] = useState<"name" | "quota">("name");
 
   const filteredCompanies = useMemo(() => {
     return companies
@@ -35,7 +35,6 @@ export default function CompaniesClient({
         return matchesSearch && matchesDept;
       })
       .sort((a, b) => {
-        if (sortBy === "rating") return b.rating - a.rating;
         if (sortBy === "quota") return b.openQuota - a.openQuota;
         return a.name.localeCompare(b.name);
       });
@@ -44,7 +43,7 @@ export default function CompaniesClient({
   const resetFilters = () => {
     setSearch("");
     setSelectedDept("ALL");
-    setSortBy("rating");
+    setSortBy("name");
   };
 
   return (
@@ -80,18 +79,15 @@ export default function CompaniesClient({
             <select
               value={sortBy}
               onChange={(e) =>
-                setSortBy(e.target.value as "rating" | "quota" | "name")
+                setSortBy(e.target.value as "name" | "quota")
               }
               className="h-11 px-3.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
             >
-              <option value="rating" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
-                ⭐ Rating Tertinggi
+              <option value="name" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
+                🔤 Nama (A - Z)
               </option>
               <option value="quota" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
                 👥 Kuota Terbanyak
-              </option>
-              <option value="name" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
-                🔤 Nama (A - Z)
               </option>
             </select>
           </div>

@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { cropImageToFile } from "@/lib/crop-image"
+import { cn } from "@/lib/utils"
 
 export interface ImageCropperModalProps {
   isOpen: boolean
@@ -39,6 +40,10 @@ export interface ImageCropperModalProps {
   outputFileName?: string
   onCropComplete: (result: { file: File; url: string }) => Promise<void> | void
   isSubmitting?: boolean
+  /**
+   * Custom width class for the modal dialog. Defaults to 70% of viewport width ("w-[95vw] max-w-[95vw] sm:w-[70vw] sm:max-w-[70vw]").
+   */
+  modalWidth?: string
 }
 
 function centerAspectCrop(width: number, height: number, aspect: number): Crop {
@@ -59,6 +64,7 @@ function ImageCropperModalContent({
   outputFileName = "avatar.webp",
   onCropComplete,
   isSubmitting = false,
+  modalWidth = "w-[95vw] max-w-[95vw] sm:w-[70vw] sm:max-w-[70vw]",
 }: ImageCropperModalProps) {
   const imgRef = React.useRef<HTMLImageElement | null>(null)
   const [crop, setCrop] = React.useState<Crop>()
@@ -94,7 +100,12 @@ function ImageCropperModalContent({
   const loading = isSubmitting || isProcessing
 
   return (
-    <DialogContent className="sm:max-w-md max-h-[95vh] flex flex-col p-5 gap-3.5 overflow-hidden shadow-none">
+    <DialogContent
+      className={cn(
+        "max-h-[92vh] flex flex-col p-4 sm:p-6 gap-3.5 overflow-hidden shadow-none",
+        modalWidth
+      )}
+    >
       <DialogHeader className="gap-1 text-left">
         <div className="flex items-center gap-2">
           <div className="flex size-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
@@ -110,7 +121,7 @@ function ImageCropperModalContent({
       </DialogHeader>
 
       {/* Lightweight DOM-based Cropper Container (Zero canvas while dragging) */}
-      <div className="flex items-center justify-center bg-muted/40 p-3 sm:p-4 rounded-xl border border-border overflow-hidden max-h-[50vh]">
+      <div className="flex-1 w-full flex items-center justify-center bg-slate-950/5 dark:bg-black/40 p-3 sm:p-5 rounded-2xl border border-border/80 overflow-hidden min-h-[300px] sm:min-h-[400px] max-h-[64vh]">
         {imageSrc && (
           <ReactCrop
             crop={crop}
@@ -119,7 +130,7 @@ function ImageCropperModalContent({
             aspect={aspectRatio}
             circularCrop={cropShape === "round"}
             keepSelection
-            className="max-h-[46vh] max-w-full rounded-lg"
+            className="max-h-[60vh] max-w-full rounded-xl"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -127,7 +138,7 @@ function ImageCropperModalContent({
               alt="Crop target"
               src={imageSrc}
               onLoad={onImageLoad}
-              className="max-h-[46vh] max-w-full object-contain block select-none pointer-events-auto"
+              className="max-h-[60vh] max-w-full object-contain block select-none pointer-events-auto"
             />
           </ReactCrop>
         )}
