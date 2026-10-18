@@ -68,12 +68,12 @@ export const MODULES_CONFIG = {
   },
   asset: {
     title: "Galeri & Aset",
-    description: "Kelola penyimpanan berkas media Cloud Storage",
+    description: "Kelola gambar dan berkas media pendukung",
     actions: {
-      read: { label: "Lihat", description: "Melihat dan mengunduh berkas aset media" },
-      create: { label: "Unggah", description: "Mengunggah berkas baru ke Cloud Storage" },
-      update: { label: "Ubah", description: "Mengubah nama atau metadata berkas aset" },
-      delete: { label: "Hapus", description: "Menghapus berkas aset dari Cloud Storage" },
+      read: { label: "Lihat", description: "Melihat dan mengunduh berkas media galeri" },
+      create: { label: "Unggah", description: "Mengunggah gambar atau berkas media baru" },
+      update: { label: "Ubah", description: "Mengubah nama atau informasi berkas media" },
+      delete: { label: "Hapus", description: "Menghapus berkas media dari galeri" },
     },
   },
 } as const satisfies Record<string, ModuleConfig>;

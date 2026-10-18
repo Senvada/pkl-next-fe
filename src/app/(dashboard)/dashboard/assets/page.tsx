@@ -18,7 +18,6 @@ import {
   ChevronRight,
   X,
   Loader2,
-  HardDrive,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -166,8 +165,13 @@ export default function AssetGalleryPage() {
               <FolderOpen className="size-5" />
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              Galeri Aset & Media
+              Galeri Aset &amp; Media
             </h1>
+            {pagination && (
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-muted font-medium text-muted-foreground">
+                {pagination.total_rows} berkas
+              </span>
+            )}
           </div>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1">
             Kelola berkas media, gambar sampul artikel, dan logo mitra secara terpusat.
@@ -194,45 +198,6 @@ export default function AssetGalleryPage() {
             <UploadCloud className="size-4" />
             Unggah Media Baru
           </Button>
-        </div>
-      </div>
-
-      {/* Metrics Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        <div className="rounded-xl border border-border/60 bg-card p-3.5 flex items-center gap-3 shadow-xs">
-          <div className="size-9 rounded-lg bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0">
-            <HardDrive className="size-4" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-[11px] text-muted-foreground">Total Berkas</p>
-            <p className="text-base font-bold text-foreground">
-              {pagination ? pagination.total_rows : assets.length}
-            </p>
-          </div>
-        </div>
-
-        <div className="rounded-xl border border-border/60 bg-card p-3.5 flex items-center gap-3 shadow-xs">
-          <div className="size-9 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
-            <ImageIcon className="size-4" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-[11px] text-muted-foreground">Format Gambar</p>
-            <p className="text-base font-bold text-foreground">
-              JPEG, PNG, WebP, SVG
-            </p>
-          </div>
-        </div>
-
-        <div className="col-span-2 sm:col-span-1 rounded-xl border border-border/60 bg-card p-3.5 flex items-center gap-3 shadow-xs">
-          <div className="size-9 rounded-lg bg-purple-500/10 text-purple-600 flex items-center justify-center shrink-0">
-            <FolderOpen className="size-4" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-[11px] text-muted-foreground">Penyimpanan Terhubung</p>
-            <p className="text-base font-bold text-foreground truncate">
-              S3 / Cloud Storage
-            </p>
-          </div>
         </div>
       </div>
 
@@ -482,52 +447,54 @@ export default function AssetGalleryPage() {
               </div>
 
               {/* Metadata Details */}
-              <div className="grid grid-cols-2 gap-3 text-xs bg-muted/20 p-3.5 rounded-xl border border-border/40">
-                <div>
-                  <span className="text-muted-foreground block text-[10px]">Ukuran Berkas</span>
-                  <span className="font-semibold text-foreground">
-                    {formatFileSize(previewAsset.size)}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground block text-[10px]">Tipe Konten (MIME)</span>
-                  <span className="font-semibold text-foreground">
-                    {previewAsset.mime_type || "Tidak diketahui"}
-                  </span>
-                </div>
-                <div className="col-span-2">
-                  <span className="text-muted-foreground block text-[10px]">Alamat Publik URL</span>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <code className="text-[11px] bg-muted px-2 py-1 rounded flex-1 truncate font-mono">
-                      {resolveAssetUrl(previewAsset.url || previewAsset.path)}
-                    </code>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-7 text-xs px-2 shrink-0 gap-1"
-                      onClick={() => handleCopyUrl(previewAsset)}
-                    >
-                      {copiedId === previewAsset.id ? (
-                        <>
-                          <Check className="size-3 text-emerald-600" />
-                          Disalin
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="size-3" />
-                          Salin
-                        </>
-                      )}
-                    </Button>
-                    <a
-                      href={resolveAssetUrl(previewAsset.url || previewAsset.path)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="h-7 px-2 border rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground text-xs"
-                    >
-                      <ExternalLink className="size-3" />
-                    </a>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs bg-muted/20 p-3.5 rounded-xl border border-border/40">
+                <div className="flex items-center gap-5">
+                  <div>
+                    <span className="text-muted-foreground block text-[10px]">Ukuran Berkas</span>
+                    <span className="font-semibold text-foreground">
+                      {formatFileSize(previewAsset.size)}
+                    </span>
                   </div>
+                  <div>
+                    <span className="text-muted-foreground block text-[10px]">Waktu Unggah</span>
+                    <span className="font-semibold text-foreground">
+                      {new Date(previewAsset.created_at).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs px-2.5 gap-1.5"
+                    onClick={() => handleCopyUrl(previewAsset)}
+                  >
+                    {copiedId === previewAsset.id ? (
+                      <>
+                        <Check className="size-3.5 text-emerald-600" />
+                        <span>Tautan Disalin!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="size-3.5" />
+                        <span>Salin Tautan</span>
+                      </>
+                    )}
+                  </Button>
+                  <a
+                    href={resolveAssetUrl(previewAsset.url || previewAsset.path)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="h-8 px-2.5 border rounded-lg flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground bg-background hover:bg-muted/40 transition-colors"
+                  >
+                    <span>Buka Penuh</span>
+                    <ExternalLink className="size-3.5" />
+                  </a>
                 </div>
               </div>
             </div>
