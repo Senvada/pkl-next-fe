@@ -17,19 +17,19 @@ interface UserMetricsProps {
 export const UserMetrics = React.memo(function UserMetrics({ metrics, mounted }: UserMetricsProps) {
   const cards = [
     {
-      label: "Total Akun Terdaftar",
+      label: "Total Pengguna",
       value: mounted ? metrics.total : "-",
       icon: Users2,
       color: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
     },
     {
-      label: "Siswa Peserta PKL",
+      label: "Siswa PKL",
       value: mounted ? metrics.siswaCount : "-",
       icon: GraduationCap,
       color: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400",
     },
     {
-      label: "Akun Mitra Industri",
+      label: "Mitra Industri",
       value: mounted ? metrics.industriCount : "-",
       icon: Building2,
       color: "bg-purple-500/10 text-purple-600 dark:text-purple-400",

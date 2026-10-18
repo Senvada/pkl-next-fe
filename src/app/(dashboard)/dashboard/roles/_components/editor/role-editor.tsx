@@ -225,6 +225,7 @@ export function RoleEditor({
             config={config}
             modPermissions={permissions[moduleKey] || {}}
             isSaving={isSaving}
+            forceExpanded={!!permSearch.trim()}
             onToggleAll={toggleAllModule}
             onTogglePermission={togglePermission}
           />

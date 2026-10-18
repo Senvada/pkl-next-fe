@@ -43,7 +43,7 @@ export function ProfileAvatarCard({ user }: ProfileAvatarCardProps) {
     try {
       setAvatarNotice(null)
       await uploadAvatarMutation.mutateAsync(file)
-      setAvatarNotice({ type: "success", text: "Foto profil berhasil diperbarui ke Cloud Storage!" })
+      setAvatarNotice({ type: "success", text: "Foto profil berhasil diperbarui!" })
     } catch (err) {
       setAvatarNotice({ type: "error", text: err instanceof Error ? err.message : "Gagal mengunggah foto profil." })
     }
@@ -72,7 +72,7 @@ export function ProfileAvatarCard({ user }: ProfileAvatarCardProps) {
           <span>Foto Profil Pengguna</span>
         </CardTitle>
         <CardDescription className="text-xs">
-          Format rasio 1:1 (persegi). Foto dipotong di browser dan diunggah langsung ke Cloud Storage via S3 Presigned URL.
+          Format foto rasio 1:1. Disarankan menggunakan foto formal atau semi-formal.
         </CardDescription>
       </CardHeader>
 
@@ -137,7 +137,7 @@ export function ProfileAvatarCard({ user }: ProfileAvatarCardProps) {
             </div>
 
             <p className="text-[11px] text-muted-foreground leading-relaxed">
-              Mendukung gambar JPG, PNG, atau WebP. Foto akan dipotong secara presisi menggunakan Cropper 1:1 sebelum disimpan.
+              Mendukung format gambar JPG, PNG, atau WebP (maksimal 5MB).
             </p>
           </div>
         </div>
