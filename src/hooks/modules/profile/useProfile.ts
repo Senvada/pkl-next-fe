@@ -15,7 +15,7 @@ import type {
 export const PROFILE_QUERY_KEY = ["user", "me"]
 
 /**
- * Hook to fetch the active user's profile from /user/me.
+ * Hook to fetch the active user's profile from /users/me.
  */
 export function useProfileQuery() {
   const token = authStore.getToken()
@@ -23,7 +23,7 @@ export function useProfileQuery() {
   return useQuery({
     queryKey: PROFILE_QUERY_KEY,
     queryFn: async (): Promise<UserProfile> => {
-      const profile = await apiClient.get<UserProfile>("/user/me")
+      const profile = await apiClient.get<UserProfile>("/users/me")
       setCurrentUser(profile)
       return profile
     },
@@ -40,7 +40,7 @@ export function useUpdateProfile() {
 
   return useMutation({
     mutationFn: async (payload: UpdateProfilePayload): Promise<UserProfile> => {
-      return apiClient.patch<UserProfile>("/user/me", payload)
+      return apiClient.patch<UserProfile>("/users/me", payload)
     },
     onSuccess: (updatedUser) => {
       setCurrentUser(updatedUser)
@@ -57,7 +57,7 @@ export function useUpdateProfile() {
 export function useChangePassword() {
   return useMutation({
     mutationFn: async (payload: ChangePasswordPayload): Promise<{ message: string }> => {
-      return apiClient.put<{ message: string }>("/user/me/password", payload)
+      return apiClient.put<{ message: string }>("/users/me/password", payload)
     },
   })
 }
@@ -75,7 +75,7 @@ export function useUploadAvatar() {
     mutationFn: async (file: File): Promise<UserProfile> => {
       // 1. Get presigned upload URL from backend
       const presign = await apiClient.post<AvatarPresignResponse>(
-        "/user/me/avatar/presign",
+        "/users/me/avatar/presign",
         {
           content_type: file.type || "image/webp",
           file_size: file.size,
@@ -98,7 +98,7 @@ export function useUploadAvatar() {
       }
 
       // 3. Update profile avatar_url in backend
-      const updatedUser = await apiClient.patch<UserProfile>("/user/me", {
+      const updatedUser = await apiClient.patch<UserProfile>("/users/me", {
         avatar_url: presign.public_url,
       })
 
@@ -121,7 +121,7 @@ export function useDeleteAvatar() {
 
   return useMutation({
     mutationFn: async (): Promise<void> => {
-      await apiClient.delete("/user/me/avatar")
+      await apiClient.delete("/users/me/avatar")
     },
     onSuccess: () => {
       const currentUser = getCurrentUser()

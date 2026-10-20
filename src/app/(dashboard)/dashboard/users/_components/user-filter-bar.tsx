@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import type { Role } from "@/types/role"
 import type { Department } from "@/types/department"
 import type { Company } from "@/types/company"
+import { UserFilterDropdowns } from "./user-filter-dropdowns"
 
 interface UserFilterBarProps {
   searchTerm: string
@@ -46,7 +47,6 @@ export const UserFilterBar = React.memo(function UserFilterBar({
 }: UserFilterBarProps) {
   const [filterExpanded, setFilterExpanded] = React.useState(false)
 
-  // Count active dropdown filters (excluding text search)
   const activeCount = React.useMemo(() => {
     let count = 0
     if (filterRole !== "all") count++
@@ -59,9 +59,7 @@ export const UserFilterBar = React.memo(function UserFilterBar({
   return (
     <Card className="rounded-2xl border border-border shadow-xs bg-card/60 overflow-hidden">
       <CardContent className="p-3 sm:p-3.5 space-y-3">
-        {/* Primary Row: Search + Quick Filter Toggle */}
         <div className="flex items-center justify-between gap-2.5">
-          {/* Search Input */}
           <div className="relative flex-1">
             <Search className="size-3.5 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
             <Input
@@ -82,7 +80,6 @@ export const UserFilterBar = React.memo(function UserFilterBar({
             )}
           </div>
 
-          {/* Filter Toggle Button */}
           <div className="flex items-center gap-1.5 shrink-0">
             <Button
               type="button"
@@ -98,11 +95,7 @@ export const UserFilterBar = React.memo(function UserFilterBar({
                   {activeCount}
                 </span>
               )}
-              <ChevronDown
-                className={`size-3.5 transition-transform duration-150 ${
-                  filterExpanded ? "rotate-180" : ""
-                }`}
-              />
+              <ChevronDown className={`size-3.5 transition-transform duration-150 ${filterExpanded ? "rotate-180" : ""}`} />
             </Button>
 
             {hasActiveFilters && (
@@ -121,80 +114,21 @@ export const UserFilterBar = React.memo(function UserFilterBar({
           </div>
         </div>
 
-        {/* Collapsible Filter Panel (Progressive Disclosure) */}
         {filterExpanded && (
-          <div className="pt-2.5 border-t border-border/50 grid grid-cols-2 sm:grid-cols-4 gap-2.5 animate-in fade-in-50 duration-150">
-            {/* 1. Filter Role */}
-            <div className="space-y-1">
-              <label className="text-[10px] font-medium text-muted-foreground block">
-                Peran / Role
-              </label>
-              <select
-                value={filterRole}
-                onChange={(e) => onRoleChange(e.target.value)}
-                className="w-full h-8 text-xs rounded-lg border border-input bg-background px-2.5 text-foreground cursor-pointer focus:outline-hidden focus:ring-1 focus:ring-ring"
-              >
-                <option value="all">Semua Role</option>
-                {roles.map((r) => (
-                  <option key={r.id} value={r.id}>{r.name}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* 2. Filter Jurusan */}
-            <div className="space-y-1">
-              <label className="text-[10px] font-medium text-muted-foreground block">
-                Jurusan / Keahlian
-              </label>
-              <select
-                value={filterDept}
-                onChange={(e) => onDeptChange(e.target.value)}
-                className="w-full h-8 text-xs rounded-lg border border-input bg-background px-2.5 text-foreground cursor-pointer focus:outline-hidden focus:ring-1 focus:ring-ring"
-              >
-                <option value="all">Semua Jurusan</option>
-                {departments.map((d) => (
-                  <option key={d.id} value={d.id}>{d.code} - {d.name}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* 3. Filter Industri (Admin only) */}
-            {isAdmin && (
-              <div className="space-y-1">
-                <label className="text-[10px] font-medium text-muted-foreground block">
-                  Mitra Industri
-                </label>
-                <select
-                  value={filterCompany}
-                  onChange={(e) => onCompanyChange(e.target.value)}
-                  className="w-full h-8 text-xs rounded-lg border border-input bg-background px-2.5 text-foreground cursor-pointer focus:outline-hidden focus:ring-1 focus:ring-ring truncate"
-                >
-                  <option value="all">Semua Industri</option>
-                  {companies.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-            {/* 4. Filter Status */}
-            <div className="space-y-1">
-              <label className="text-[10px] font-medium text-muted-foreground block">
-                Status Akun
-              </label>
-              <select
-                value={filterStatus}
-                onChange={(e) => onStatusChange(e.target.value)}
-                className="w-full h-8 text-xs rounded-lg border border-input bg-background px-2.5 text-foreground cursor-pointer focus:outline-hidden focus:ring-1 focus:ring-ring"
-              >
-                <option value="all">Semua Status</option>
-                <option value="active">Aktif</option>
-                <option value="waiting">Menunggu</option>
-                <option value="inactive">Nonaktif</option>
-                <option value="banned">Diblokir</option>
-              </select>
-            </div>
-          </div>
+          <UserFilterDropdowns
+            filterRole={filterRole}
+            onRoleChange={onRoleChange}
+            filterDept={filterDept}
+            onDeptChange={onDeptChange}
+            filterCompany={filterCompany}
+            onCompanyChange={onCompanyChange}
+            filterStatus={filterStatus}
+            onStatusChange={onStatusChange}
+            roles={roles}
+            departments={departments}
+            companies={companies}
+            isAdmin={isAdmin}
+          />
         )}
       </CardContent>
     </Card>
