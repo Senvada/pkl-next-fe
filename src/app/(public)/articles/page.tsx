@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import { ARTICLES } from "@/lib/mock-data";
 import FeaturedArticleHero from "./_components/featured-article-hero";
 import ArticlesClient from "./_components/articles-client";
 import { Badge } from "@/components/ui/badge";
 import { Newspaper } from "lucide-react";
+import { getPublicArticles } from "@/services/public-api";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Artikel & Panduan PKL | SMKN 6 Malang",
@@ -11,12 +13,12 @@ export const metadata: Metadata = {
     "Kumpulan panduan teknis, tips karir, etika industri, dan warta pelaksanaan Praktik Kerja Lapangan SMKN 6 Malang.",
 };
 
-export default function ArticlesPage() {
-  const featuredArticle = ARTICLES.find((a) => a.featured) || ARTICLES[0];
+export default async function ArticlesPage() {
+  const articles = await getPublicArticles({ limit: 50 });
+  const featuredArticle = articles[0];
 
   return (
     <div className="py-24 sm:py-32 container mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Header */}
       <div className="max-w-3xl mb-10">
         <Badge
           variant="outline"
@@ -33,11 +35,9 @@ export default function ArticlesPage() {
         </p>
       </div>
 
-      {/* Featured Banner Article */}
       {featuredArticle && <FeaturedArticleHero article={featuredArticle} />}
 
-      {/* Interactive List of Articles */}
-      <ArticlesClient articles={ARTICLES} />
+      <ArticlesClient articles={articles} />
     </div>
   );
 }

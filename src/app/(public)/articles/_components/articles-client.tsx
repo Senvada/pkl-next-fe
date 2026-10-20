@@ -1,30 +1,34 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Article } from "@/lib/mock-data";
 import ArticleCard from "./article-card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, X, Newspaper } from "lucide-react";
 
-interface ArticlesClientProps {
-  articles: Article[];
-}
-
-const CATEGORIES = ["Semua", "Panduan", "Tips Kerja", "Berita"];
-
-export default function ArticlesClient({ articles }: ArticlesClientProps) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function ArticlesClient({ articles }: { articles: any[] }) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Semua");
 
+  const categories = useMemo(() => {
+    const set = new Set<string>();
+    articles.forEach((a) => {
+      const c = a.company?.name || a.category;
+      if (c) set.add(c);
+    });
+    return ["Semua", ...Array.from(set).slice(0, 5)];
+  }, [articles]);
+
   const filteredArticles = useMemo(() => {
     return articles.filter((art) => {
+      const query = search.toLowerCase();
       const matchesSearch =
-        art.title.toLowerCase().includes(search.toLowerCase()) ||
-        art.excerpt.toLowerCase().includes(search.toLowerCase()) ||
-        art.tags.some((tag) => tag.toLowerCase().includes(search.toLowerCase()));
+        art.title.toLowerCase().includes(query) ||
+        (art.excerpt && art.excerpt.toLowerCase().includes(query));
 
-      const matchesCat = category === "Semua" || art.category === category;
+      const cat = art.company?.name || art.category;
+      const matchesCat = category === "Semua" || cat === category;
 
       return matchesSearch && matchesCat;
     });
@@ -34,9 +38,8 @@ export default function ArticlesClient({ articles }: ArticlesClientProps) {
     <div className="space-y-8">
       {/* Search & Category Tabs */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl border border-slate-200/80 bg-white dark:border-white/10 dark:bg-[#16212D] shadow-xs dark:shadow-lg">
-        {/* Categories */}
         <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-          {CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setCategory(cat)}
@@ -51,7 +54,6 @@ export default function ArticlesClient({ articles }: ArticlesClientProps) {
           ))}
         </div>
 
-        {/* Search */}
         <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
           <Input
@@ -76,7 +78,7 @@ export default function ArticlesClient({ articles }: ArticlesClientProps) {
       {filteredArticles.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredArticles.map((article) => (
-            <ArticleCard key={article.slug} article={article} />
+            <ArticleCard key={article.id || article.slug} article={article} />
           ))}
         </div>
       ) : (

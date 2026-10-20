@@ -14,6 +14,12 @@ export type RequestOptions = RequestInit & {
  * - Development: Uses manual API endpoint configurable via NEXT_PUBLIC_API_URL or defaults to "http://localhost:3001/api/v1".
  */
 export function getApiBaseUrl(): string {
+  // In server-side rendering (SSR), fetch requires an absolute URL
+  if (typeof window === "undefined") {
+    const serverUrl = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL
+    return (serverUrl || "http://127.0.0.1:3001/api/v1").replace(/\/+$/, "")
+  }
+
   if (process.env.NODE_ENV === "production") {
     return "/api/v1"
   }

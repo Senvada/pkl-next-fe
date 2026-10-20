@@ -9,14 +9,15 @@ import type {
 } from "./types";
 import type { Asset } from "@/types/asset";
 
+const defaultContextValue: AssetPickerContextValue = {
+  pick: async () => null,
+};
+
 const AssetPickerContext = React.createContext<AssetPickerContextValue | null>(null);
 
-export function useAssetPicker() {
+export function useAssetPicker(): AssetPickerContextValue {
   const ctx = React.useContext(AssetPickerContext);
-  if (!ctx) {
-    throw new Error("useAssetPicker must be used within <AssetPickerProvider>");
-  }
-  return ctx;
+  return ctx ?? defaultContextValue;
 }
 
 export function AssetPickerProvider({ children }: { children: React.ReactNode }) {

@@ -1,5 +1,3 @@
-import { useSyncExternalStore } from "react"
-
 const ACCESS_TOKEN_KEY = "pkl_access_token"
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7 // 7 days
 
@@ -72,12 +70,4 @@ export const authStore = {
       listeners = listeners.filter((l) => l !== listener)
     }
   },
-}
-
-export function useAuthToken(): string | null {
-  return useSyncExternalStore(
-    authStore.subscribe,
-    authStore.getToken,
-    () => null
-  )
 }

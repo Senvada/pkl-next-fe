@@ -1,15 +1,22 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Article } from "@/lib/mock-data";
-import { Calendar, Clock, ArrowRight, Sparkles } from "lucide-react";
+import { Calendar, ArrowRight, Sparkles, Newspaper, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-export default function FeaturedArticleHero({ article }: { article: Article }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function FeaturedArticleHero({ article }: { article: any }) {
+  const cover = article.cover_url || article.coverImage;
+  const authorName = article.author?.name || "Penulis";
+  const authorAvatar = article.author?.avatar_url || article.author?.avatar;
+  const companyName = article.company?.name || article.category || "Informasi PKL";
+  const dateStr = article.created_at
+    ? new Date(article.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })
+    : (article.publishedAt || "Terbaru");
+
   return (
     <div className="relative overflow-hidden rounded-3xl border border-slate-200/80 bg-white dark:border-white/10 dark:bg-[#16212D] shadow-sm dark:shadow-2xl mb-12">
       <div className="grid grid-cols-1 lg:grid-cols-12 items-center">
-        {/* Left Column: Info */}
         <div className="lg:col-span-7 p-6 sm:p-10 lg:p-12 space-y-4">
           <div className="flex items-center gap-2">
             <Badge className="bg-blue-600 text-white font-semibold">
@@ -17,7 +24,7 @@ export default function FeaturedArticleHero({ article }: { article: Article }) {
               Artikel Utama
             </Badge>
             <span className="text-xs text-blue-600 dark:text-blue-400 font-semibold">
-              {article.category}
+              {companyName}
             </span>
           </div>
 
@@ -28,30 +35,24 @@ export default function FeaturedArticleHero({ article }: { article: Article }) {
           </Link>
 
           <p className="text-sm sm:text-base leading-relaxed text-slate-600 dark:text-slate-300 line-clamp-3">
-            {article.excerpt}
+            {article.excerpt || "Baca panduan lengkap dan dokumentasi pelaksanaan praktik kerja lapangan di industri mitra."}
           </p>
 
           <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400 pt-2">
             <div className="flex items-center gap-2">
-              <div className="relative size-6 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700">
-                <Image
-                  src={article.author.avatar}
-                  alt={article.author.name}
-                  fill
-                  className="object-cover"
-                />
+              <div className="relative size-6 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+                {authorAvatar ? (
+                  <Image src={authorAvatar} alt={authorName} fill className="object-cover" />
+                ) : (
+                  <User className="size-3.5 text-slate-400" />
+                )}
               </div>
-              <span className="font-semibold text-slate-900 dark:text-white">{article.author.name}</span>
+              <span className="font-semibold text-slate-900 dark:text-white">{authorName}</span>
             </div>
             <span>•</span>
             <div className="flex items-center gap-1">
               <Calendar className="size-3.5" />
-              <span>{article.publishedAt}</span>
-            </div>
-            <span>•</span>
-            <div className="flex items-center gap-1">
-              <Clock className="size-3.5" />
-              <span>{article.readTime}</span>
+              <span>{dateStr}</span>
             </div>
           </div>
 
@@ -68,15 +69,21 @@ export default function FeaturedArticleHero({ article }: { article: Article }) {
           </div>
         </div>
 
-        {/* Right Column: Hero Image */}
         <div className="lg:col-span-5 relative h-64 sm:h-80 lg:h-full min-h-[320px] w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
-          <Image
-            src={article.coverImage}
-            alt={article.title}
-            fill
-            priority
-            className="object-cover transition-transform duration-700 hover:scale-105"
-          />
+          {cover ? (
+            <Image
+              src={cover}
+              alt={article.title}
+              fill
+              priority
+              className="object-cover transition-transform duration-700 hover:scale-105"
+            />
+          ) : (
+            <div className="size-full flex flex-col items-center justify-center text-slate-400 gap-2">
+              <Newspaper className="size-12 text-slate-400" />
+              <span className="text-xs">Dokumentasi PKL</span>
+            </div>
+          )}
         </div>
       </div>
     </div>

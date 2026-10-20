@@ -16,6 +16,29 @@ interface BlockImageProps {
 export function BlockImage({ data, onChange, previewMode = false }: BlockImageProps) {
   const { pick } = useAssetPicker();
 
+  const alignClasses = {
+    full: "w-full",
+    center: "max-w-xl mx-auto",
+    left: "max-w-md mr-auto",
+    right: "max-w-md ml-auto",
+  }[data.align || "center"];
+
+  if (previewMode) {
+    if (!data.url) return null;
+    return (
+      <figure className={cn("my-4 space-y-2", alignClasses)}>
+        <div className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-sm border border-border/40">
+          <Image src={data.url} alt={data.caption || "Gambar konten"} fill className="object-cover" />
+        </div>
+        {data.caption && (
+          <figcaption className="text-xs text-center text-muted-foreground italic">
+            {data.caption}
+          </figcaption>
+        )}
+      </figure>
+    );
+  }
+
   const handlePickAsset = async () => {
     const asset = await pick({
       accept: ["image/*"],
@@ -27,7 +50,6 @@ export function BlockImage({ data, onChange, previewMode = false }: BlockImagePr
   };
 
   if (!data.url) {
-    if (previewMode) return null;
     return (
       <button
         type="button"
@@ -40,28 +62,6 @@ export function BlockImage({ data, onChange, previewMode = false }: BlockImagePr
         <span className="text-sm font-medium">Pilih Gambar dari Galeri Aset</span>
         <span className="text-xs text-muted-foreground">Klik untuk membuka galeri aset atau upload foto baru</span>
       </button>
-    );
-  }
-
-  const alignClasses = {
-    full: "w-full",
-    center: "max-w-xl mx-auto",
-    left: "max-w-md mr-auto",
-    right: "max-w-md ml-auto",
-  }[data.align || "center"];
-
-  if (previewMode) {
-    return (
-      <figure className={cn("my-4 space-y-2", alignClasses)}>
-        <div className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-sm border border-border/40">
-          <Image src={data.url} alt={data.caption || "Gambar konten"} fill className="object-cover" />
-        </div>
-        {data.caption && (
-          <figcaption className="text-xs text-center text-muted-foreground italic">
-            {data.caption}
-          </figcaption>
-        )}
-      </figure>
     );
   }
 
