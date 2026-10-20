@@ -170,6 +170,28 @@ export function useUpdateCompany() {
   })
 }
 
+export function useUpdateCompanyContent() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      content,
+    }: {
+      id: string
+      content: unknown
+    }): Promise<Company> => {
+      return apiClient.patch<Company>(`/companies/${id}/content`, { content })
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: COMPANIES_QUERY_KEY })
+      queryClient.invalidateQueries({
+        queryKey: [...COMPANIES_QUERY_KEY, "detail", variables.id],
+      })
+    },
+  })
+}
+
 export function useDeleteCompany() {
   const queryClient = useQueryClient()
 

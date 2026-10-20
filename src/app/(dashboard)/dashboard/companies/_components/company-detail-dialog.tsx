@@ -1,9 +1,8 @@
 "use client"
-
 import * as React from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Building2, ExternalLink } from "lucide-react"
+import { Building2, ExternalLink, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -66,17 +65,30 @@ export function CompanyDetailDialog({
         <CompanyDetailInfo company={company} />
 
         <DialogFooter className="pt-3 border-t border-slate-100 dark:border-white/5 flex items-center justify-between sm:justify-between w-full">
-          <Button
-            variant="outline"
-            size="sm"
-            asChild
-            className="h-8.5 rounded-xl text-xs text-blue-600 dark:text-blue-400 border-slate-200 dark:border-white/10"
-          >
-            <Link href={`/companies/${company.slug}`} target="_blank">
-              <ExternalLink className="size-3.5 mr-1.5" />
-              Halaman Publik
-            </Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+              className="h-8.5 rounded-xl text-xs text-blue-600 dark:text-blue-400 border-slate-200 dark:border-white/10"
+            >
+              <Link href={`/companies/${company.slug}`} target="_blank">
+                <ExternalLink className="size-3.5 mr-1.5" />
+                Halaman Publik
+              </Link>
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              asChild
+              className="h-8.5 rounded-xl text-xs bg-indigo-600 hover:bg-indigo-700 text-white gap-1.5"
+            >
+              <Link href={`/dashboard/companies/${company.id}/content`}>
+                <FileText className="size-3.5" />
+                Kelola Konten Profil
+              </Link>
+            </Button>
+          </div>
 
           <Button
             type="button"

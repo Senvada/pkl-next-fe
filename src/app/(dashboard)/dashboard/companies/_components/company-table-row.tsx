@@ -4,15 +4,7 @@ import * as React from "react"
 import Link from "next/link"
 import Image from "next/image"
 import {
-  Building2,
-  ExternalLink,
-  Eye,
-  Pencil,
-  Trash2,
-  MapPin,
-  Mail,
-  Phone,
-  Users,
+  Building2, ExternalLink, Eye, Pencil, Trash2, MapPin, Mail, Phone, Users, FileText
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -133,6 +125,11 @@ export function CompanyTableRow({
           {canEdit && (
             <Button variant="ghost" size="icon" onClick={() => onEdit(comp)} className="size-8 rounded-lg text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20" title="Edit Data Mitra">
               <Pencil className="size-4" />
+            </Button>
+          )}
+          {canEdit && (
+            <Button variant="ghost" size="icon" asChild className="size-8 rounded-lg text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20" title="Kelola Konten Profil">
+              <Link href={`/dashboard/companies/${comp.id}/content`}><FileText className="size-4" /></Link>
             </Button>
           )}
           {canDelete && (
