@@ -69,7 +69,6 @@ export const CompanyFilterBar = React.memo(function CompanyFilterBar({
             )}
           </div>
 
-          {/* Mobile Filter Toggle */}
           <Button
             type="button"
             variant="outline"
@@ -79,91 +78,63 @@ export const CompanyFilterBar = React.memo(function CompanyFilterBar({
           >
             <SlidersHorizontal className="size-4" />
             {activeCount > 0 && (
-              <span className="absolute -top-1 -right-1 size-4.5 rounded-full bg-blue-600 text-white text-[10px] font-bold flex items-center justify-center">
-                {activeCount}
-              </span>
+              <span className="absolute -top-1 -right-1 size-4.5 rounded-full bg-blue-600 text-white text-[10px] font-bold flex items-center justify-center">{activeCount}</span>
             )}
-            <ChevronDown
-              className={`size-3.5 ml-1 transition-transform duration-200 ${
-                filterExpanded ? "rotate-180" : ""
-              }`}
-            />
+            <ChevronDown className={`size-3.5 ml-1 transition-transform duration-200 ${filterExpanded ? "rotate-180" : ""}`} />
           </Button>
 
-          {/* Reset Button */}
           {hasActiveFilters && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={onResetFilters}
-              className="h-10 px-3 text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl shrink-0"
-              title="Reset semua filter"
-            >
-              <RotateCcw className="size-3.5 mr-1.5" />
-              Reset
+            <Button type="button" variant="ghost" size="sm" onClick={onResetFilters} className="h-10 px-3 text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl shrink-0" title="Reset semua filter">
+              <RotateCcw className="size-3.5 mr-1.5" />Reset
             </Button>
           )}
         </div>
 
-        {/* Secondary Row: Dropdowns (Always on Desktop, Collapsible on Mobile) */}
-        <div
-          className={`grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 border-t border-slate-100 dark:border-white/5 md:grid ${
-            filterExpanded ? "grid" : "hidden md:grid"
-          }`}
-        >
-          {/* Department Filter */}
-          <div className="flex flex-col gap-1">
-            <label className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-              Jurusan Terkait
-            </label>
-            <select
-              value={filterDept}
-              onChange={(e) => onDeptChange(e.target.value)}
-              className="h-9.5 px-3 text-xs rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-            >
-              <option value="">Semua Jurusan</option>
-              {departments.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name} ({d.code})
-                </option>
-              ))}
-            </select>
-          </div>
+        {/* Secondary Row: Dropdowns */}
+        <div className={`grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 border-t border-slate-100 dark:border-white/5 ${filterExpanded ? "grid" : "hidden md:grid"}`}>
+          <FilterSelect label="Jurusan Terkait" value={filterDept} onChange={onDeptChange}>
+            <option value="">Semua Jurusan</option>
+            {departments.map((d) => (
+              <option key={d.id} value={d.id}>{d.name} ({d.code})</option>
+            ))}
+          </FilterSelect>
 
-          {/* Status Filter */}
-          <div className="flex flex-col gap-1">
-            <label className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-              Status Mitra
-            </label>
-            <select
-              value={filterStatus}
-              onChange={(e) => onStatusChange(e.target.value)}
-              className="h-9.5 px-3 text-xs rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-            >
-              <option value="">Semua Status</option>
-              <option value="active">Aktif</option>
-              <option value="inactive">Nonaktif</option>
-            </select>
-          </div>
+          <FilterSelect label="Status Mitra" value={filterStatus} onChange={onStatusChange}>
+            <option value="">Semua Status</option>
+            <option value="active">Aktif</option>
+            <option value="inactive">Nonaktif</option>
+          </FilterSelect>
 
-          {/* Rows Limit */}
-          <div className="flex flex-col gap-1">
-            <label className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-              Jumlah Per Halaman
-            </label>
-            <select
-              value={limit}
-              onChange={(e) => onLimitChange(Number(e.target.value))}
-              className="h-9.5 px-3 text-xs rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-            >
-              <option value={10}>10 data</option>
-              <option value={25}>25 data</option>
-              <option value={50}>50 data</option>
-            </select>
-          </div>
+          <FilterSelect label="Jumlah Per Halaman" value={limit} onChange={(v) => onLimitChange(Number(v))}>
+            <option value={10}>10 data</option>
+            <option value={25}>25 data</option>
+            <option value={50}>50 data</option>
+          </FilterSelect>
         </div>
       </CardContent>
     </Card>
   )
 })
+
+function FilterSelect({
+  label,
+  value,
+  onChange,
+  children,
+}: {
+  label: string
+  value: string | number
+  onChange: (v: string) => void
+  children: React.ReactNode
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="text-[11px] font-medium text-slate-500 dark:text-slate-400">{label}</label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="h-9.5 px-3 text-xs rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+      >{children}</select>
+    </div>
+  )
+}

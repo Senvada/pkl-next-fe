@@ -1,17 +1,17 @@
 "use client"
 
 import * as React from "react"
-import { useUsersPaginatedQuery, useCreateUser, useUpdateUser, useDeleteUser } from "@/hooks/modules/user"
+import { useUsersPaginatedQuery } from "@/hooks/modules/user"
 import { useRolesQuery } from "@/hooks/modules/role"
 import { useDepartmentsQuery } from "@/hooks/modules/department"
 import { useCompaniesQuery } from "@/hooks/modules/company"
 import { useProfileQuery } from "@/hooks/modules/profile"
-import type { CreateUserPayload, UpdateUserPayload } from "@/types/user"
 
 import { useUserFilter } from "./_hooks/use-user-filter"
 import { useUserDialogs } from "./_hooks/use-user-dialogs"
+import { useUserPageOperations } from "./_hooks/use-user-page-operations"
 import { UserHeader } from "./_components/user-header"
-import { UserNotice, type PageNotice } from "./_components/user-notice"
+import { UserNotice } from "./_components/user-notice"
 import { UserMetrics } from "./_components/user-metrics"
 import { UserFilterBar } from "./_components/user-filter-bar"
 import { UserTable } from "./_components/user-table"
@@ -47,53 +47,12 @@ export default function UserManagementPage() {
   const users = React.useMemo(() => queryResult?.users ?? [], [queryResult?.users])
   const pagination = queryResult?.pagination
 
-  const createUserMutation = useCreateUser()
-  const updateUserMutation = useUpdateUser()
-  const deleteUserMutation = useDeleteUser()
-  const isBusy = createUserMutation.isPending || updateUserMutation.isPending || deleteUserMutation.isPending
-
-  const [pageNotice, setPageNotice] = React.useState<PageNotice | null>(null)
-  const handleCloseNotice = React.useCallback(() => setPageNotice(null), [])
-
-  const editingUser = dialogs.editingUser
-  const userToDelete = dialogs.userToDelete
-  const setDeleteDialogOpen = dialogs.setDeleteDialogOpen
-  const setUserToDelete = dialogs.setUserToDelete
-  const isDeletePending = deleteUserMutation.isPending
-  const mutateUpdateUser = updateUserMutation.mutateAsync
-  const mutateCreateUser = createUserMutation.mutateAsync
-  const mutateDeleteUser = deleteUserMutation.mutateAsync
-
-  const handleSaveUser = React.useCallback(async ({
-    isEdit,
-    payload,
-    name,
-  }: {
-    isEdit: boolean
-    payload: CreateUserPayload | UpdateUserPayload
-    name: string
-  }) => {
-    if (isEdit && editingUser) {
-      await mutateUpdateUser({ id: editingUser.id, payload: payload as UpdateUserPayload })
-      setPageNotice({ type: "success", text: `Data pengguna "${name}" berhasil diperbarui.` })
-    } else {
-      await mutateCreateUser(payload as CreateUserPayload)
-      setPageNotice({ type: "success", text: `Pengguna baru "${name}" berhasil ditambahkan.` })
-    }
-  }, [editingUser, mutateUpdateUser, mutateCreateUser])
-
-  const handleConfirmDelete = React.useCallback(async () => {
-    if (!userToDelete || isDeletePending) return
-    try {
-      await mutateDeleteUser(userToDelete.id)
-      setPageNotice({ type: "success", text: `Pengguna "${userToDelete.name}" berhasil dihapus.` })
-      setDeleteDialogOpen(false)
-      setUserToDelete(null)
-    } catch (err) {
-      setPageNotice({ type: "error", text: err instanceof Error ? err.message : "Gagal menghapus pengguna." })
-      setDeleteDialogOpen(false)
-    }
-  }, [userToDelete, isDeletePending, mutateDeleteUser, setDeleteDialogOpen, setUserToDelete])
+  const ops = useUserPageOperations({
+    editingUser: dialogs.editingUser,
+    userToDelete: dialogs.userToDelete,
+    setDeleteDialogOpen: dialogs.setDeleteDialogOpen,
+    setUserToDelete: dialogs.setUserToDelete,
+  })
 
   const metrics = React.useMemo(() => {
     const total = pagination?.total_rows ?? users.length
@@ -107,8 +66,8 @@ export default function UserManagementPage() {
 
   return (
     <div className="flex-1 min-h-0 flex flex-col w-full max-w-7xl mx-auto space-y-4">
-      <UserHeader onOpenCreate={dialogs.handleOpenCreate} disabled={isBusy} />
-      <UserNotice notice={pageNotice} onClose={handleCloseNotice} />
+      <UserHeader onOpenCreate={dialogs.handleOpenCreate} disabled={ops.isBusy} />
+      <UserNotice notice={ops.pageNotice} onClose={ops.handleCloseNotice} />
       <UserMetrics metrics={metrics} mounted={mounted} />
 
       <UserFilterBar
@@ -136,7 +95,7 @@ export default function UserManagementPage() {
         isError={isError}
         error={error}
         mounted={mounted}
-        isBusy={isBusy}
+        isBusy={ops.isBusy}
         myProfile={myProfile}
         hasActiveFilters={filter.hasActiveFilters}
         onResetFilters={filter.handleResetFilters}
@@ -145,7 +104,7 @@ export default function UserManagementPage() {
         onEdit={dialogs.handleOpenEdit}
         onDelete={dialogs.handleOpenDelete}
       >
-        <UserPagination pagination={pagination} isBusy={isBusy} onPageChange={filter.setPage} />
+        <UserPagination pagination={pagination} isBusy={ops.isBusy} onPageChange={filter.setPage} />
       </UserTable>
 
       <UserFormDrawer
@@ -158,8 +117,8 @@ export default function UserManagementPage() {
         isAdmin={isAdmin}
         isIndustri={isIndustri}
         myCompanyId={myProfile?.company_id}
-        isSaving={createUserMutation.isPending || updateUserMutation.isPending}
-        onSave={handleSaveUser}
+        isSaving={ops.isSaving}
+        onSave={ops.handleSaveUser}
       />
 
       <UserDetailDialog
@@ -172,8 +131,8 @@ export default function UserManagementPage() {
         open={dialogs.deleteDialogOpen}
         onOpenChange={dialogs.setDeleteDialogOpen}
         user={dialogs.userToDelete}
-        isDeleting={deleteUserMutation.isPending}
-        onConfirm={handleConfirmDelete}
+        isDeleting={ops.isDeletePending}
+        onConfirm={ops.handleConfirmDelete}
       />
     </div>
   )

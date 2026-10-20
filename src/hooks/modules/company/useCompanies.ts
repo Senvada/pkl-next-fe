@@ -202,7 +202,7 @@ export function useResolveGoogleMaps() {
     mutationFn: async (
       payload: ResolveMapsPayload
     ): Promise<ResolveMapsResponse> => {
-      return apiClient.post<ResolveMapsResponse>("/maps/resolve", payload)
+      return apiClient.post<ResolveMapsResponse>("/companies/maps/resolve", payload)
     },
   })
 }

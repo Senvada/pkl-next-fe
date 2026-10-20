@@ -119,31 +119,14 @@ export const UserTableRow = React.memo(function UserTableRow({
       {/* 6. Aksi */}
       <td className="px-4 py-3 text-right whitespace-nowrap">
         <div className="flex items-center justify-end gap-1">
-          <button
-            type="button"
-            onClick={() => onDetail(user)}
-            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
-            title="Lihat Detail"
-          >
+          <button type="button" onClick={() => onDetail(user)} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer" title="Lihat Detail">
             <Eye className="size-3.5" />
           </button>
-          <button
-            type="button"
-            onClick={() => onEdit(user)}
-            disabled={isBusy}
-            className="p-1.5 rounded-lg text-muted-foreground hover:text-blue-600 hover:bg-blue-500/10 transition-colors cursor-pointer"
-            title="Ubah Data"
-          >
+          <button type="button" onClick={() => onEdit(user)} disabled={isBusy} className="p-1.5 rounded-lg text-muted-foreground hover:text-blue-600 hover:bg-blue-500/10 transition-colors cursor-pointer" title="Ubah Data">
             <Edit3 className="size-3.5" />
           </button>
           {!isSelf && !isUserAdmin && (
-            <button
-              type="button"
-              onClick={() => onDelete(user)}
-              disabled={isBusy}
-              className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
-              title="Hapus Pengguna"
-            >
+            <button type="button" onClick={() => onDelete(user)} disabled={isBusy} className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer" title="Hapus Pengguna">
               <Trash2 className="size-3.5" />
             </button>
           )}
@@ -152,3 +135,4 @@ export const UserTableRow = React.memo(function UserTableRow({
     </tr>
   )
 })
+
