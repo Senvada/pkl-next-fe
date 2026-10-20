@@ -22,7 +22,10 @@ export async function getPublicCompanies(params: PublicCompaniesParams = {}): Pr
       auth: false,
       next: { revalidate: 60 },
     });
-    return Array.isArray(res.data) ? res.data : [];
+    if (!res) return [];
+    if (Array.isArray(res.data)) return res.data;
+    if (Array.isArray(res)) return res as unknown as Company[];
+    return [];
   } catch (error) {
     console.error("[SSR] Failed to fetch public companies:", error);
     return [];
@@ -73,7 +76,10 @@ export async function getPublicArticles(params: PublicArticlesParams = {}): Prom
       auth: false,
       next: { revalidate: 60 },
     });
-    return Array.isArray(res.data) ? res.data : [];
+    if (!res) return [];
+    if (Array.isArray(res.data)) return res.data;
+    if (Array.isArray(res)) return res as unknown as Article[];
+    return [];
   } catch (error) {
     console.error("[SSR] Failed to fetch public articles:", error);
     return [];
