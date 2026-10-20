@@ -53,7 +53,7 @@ export function CompanyBasicInfoSection({
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-1">
           <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
             Status Kerjasama
@@ -69,20 +69,6 @@ export function CompanyBasicInfoSection({
             <option value="inactive">Nonaktif</option>
           </select>
         </div>
-
-        <div className="space-y-1">
-          <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-            Email Resmi Mitra
-          </label>
-          <Input
-            type="email"
-            placeholder="kontak@perusahaan.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="h-9.5 text-xs rounded-xl"
-          />
-        </div>
-
         <div className="space-y-1">
           <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
             No. Telepon / WhatsApp
@@ -95,6 +81,18 @@ export function CompanyBasicInfoSection({
             className="h-9.5 text-xs rounded-xl"
           />
         </div>
+      </div>
+      <div className="space-y-1">
+        <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+          Email Resmi Mitra
+        </label>
+        <Input
+          type="email"
+          placeholder="kontak@perusahaan.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="h-9.5 text-xs rounded-xl"
+        />
       </div>
 
       <div className="space-y-1">
