@@ -17,7 +17,10 @@ export function getApiBaseUrl(): string {
   // In server-side rendering (SSR), fetch requires an absolute URL
   if (typeof window === "undefined") {
     const serverUrl = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL
-    return (serverUrl || "http://127.0.0.1:3001/api/v1").replace(/\/+$/, "")
+    if (serverUrl) {
+      return serverUrl.replace("localhost", "127.0.0.1").replace(/\/+$/, "")
+    }
+    return "http://127.0.0.1:3001/api/v1"
   }
 
   if (process.env.NODE_ENV === "production") {
