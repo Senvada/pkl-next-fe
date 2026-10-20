@@ -13,7 +13,7 @@ export interface Company {
   phone_number?: string | null
   address?: string | null
   description?: string | null
-  content?: Record<string, unknown> | null
+  content?: unknown
   image_url?: string | null
   gmaps_link?: string | null
   lat?: number | null
@@ -33,7 +33,7 @@ export interface CreateCompanyPayload {
   phone_number?: string | null
   address?: string | null
   description?: string | null
-  content?: Record<string, unknown> | null
+  content?: unknown
   image_url?: string | null
   gmaps_link?: string | null
   lat?: number | null
@@ -48,7 +48,7 @@ export interface UpdateCompanyPayload {
   phone_number?: string | null
   address?: string | null
   description?: string | null
-  content?: Record<string, unknown> | null
+  content?: unknown
   image_url?: string | null
   gmaps_link?: string | null
   lat?: number | null

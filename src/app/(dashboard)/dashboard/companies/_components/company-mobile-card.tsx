@@ -4,14 +4,7 @@ import * as React from "react"
 import Link from "next/link"
 import Image from "next/image"
 import {
-  Building2,
-  ExternalLink,
-  Eye,
-  Pencil,
-  Trash2,
-  MapPin,
-  Phone,
-  Users,
+  Building2, ExternalLink, Eye, Pencil, Trash2, MapPin, Phone, Users, FileText
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -71,10 +64,7 @@ export function CompanyMobileCard({
               key={d.id}
               variant="outline"
               className="text-[10px] px-1.5 py-0 rounded font-medium border-slate-200 dark:border-white/10"
-              style={{
-                borderColor: d.color ? `${d.color}60` : undefined,
-                color: d.color || undefined,
-              }}
+              style={{ borderColor: d.color ? `${d.color}60` : undefined, color: d.color || undefined }}
             >
               {d.code}
             </Badge>
@@ -85,14 +75,12 @@ export function CompanyMobileCard({
       <div className="space-y-1 text-xs text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-white/5">
         {comp.address && (
           <div className="flex items-center gap-1.5 truncate">
-            <MapPin className="size-3.5 text-rose-500 shrink-0" />
-            <span className="truncate">{comp.address}</span>
+            <MapPin className="size-3.5 text-rose-500 shrink-0" /><span className="truncate">{comp.address}</span>
           </div>
         )}
         {comp.phone_number && (
           <div className="flex items-center gap-1.5 truncate">
-            <Phone className="size-3.5 text-emerald-500 shrink-0" />
-            <span>{comp.phone_number}</span>
+            <Phone className="size-3.5 text-emerald-500 shrink-0" /><span>{comp.phone_number}</span>
           </div>
         )}
         <div className="flex items-center gap-1.5">
@@ -127,6 +115,19 @@ export function CompanyMobileCard({
             >
               <Pencil className="size-3.5 mr-1" />
               Edit
+            </Button>
+          )}
+          {canEdit && (
+            <Button
+              variant="ghost"
+              size="sm"
+              asChild
+              className="h-8 px-2.5 text-xs rounded-xl text-indigo-600 dark:text-indigo-400"
+            >
+              <Link href={`/dashboard/companies/${comp.id}/content`}>
+                <FileText className="size-3.5 mr-1" />
+                Konten
+              </Link>
             </Button>
           )}
           {canDelete && (

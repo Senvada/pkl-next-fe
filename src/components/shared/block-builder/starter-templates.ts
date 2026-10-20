@@ -80,7 +80,7 @@ export const STARTER_TEMPLATES: StarterTemplate[] = [
     category: "company",
     blocks: [
       { id: nanoid(), type: "heading", data: { level: 1, content: "Profil & Lingkungan Kerja Mitra Industri", align: "left" } },
-      { id: nanoid(), type: "text", data: { content: makeDoc("Deskripsikan bidang industri, produk utama, dan budaya kerja.") } },
+      { id: nanoid(), type: "text", data: { content: makeDoc("Deskripsikan bidang industri, produk utama, dan budaya kerja perusahaan.") } },
       {
         id: nanoid(),
         type: "callout",
@@ -88,6 +88,33 @@ export const STARTER_TEMPLATES: StarterTemplate[] = [
           intent: "info",
           title: "Fasilitas & Kompetensi Magang",
           content: "Informasi fasilitas laboratorium/kantor serta kualifikasi yang dicari dari peserta didik magang.",
+        },
+      },
+    ],
+  },
+  {
+    id: "company-facilities",
+    title: "Fasilitas & Standar Kerja DU/DI",
+    desc: "Dokumentasi fasilitas workshop/lab, perangkat kerja, dan standar keselamatan industri.",
+    category: "company",
+    blocks: [
+      { id: nanoid(), type: "heading", data: { level: 1, content: "Fasilitas & Standar Kerja Industri", align: "left" } },
+      {
+        id: nanoid(),
+        type: "columns",
+        data: {
+          ratio: "50-50",
+          left: [{ id: nanoid(), type: "image", data: { url: "", caption: "Ruang kerja / workshop industri", align: "center" } }],
+          right: [{ id: nanoid(), type: "text", data: { content: makeDoc("Deskripsi peralatan standar industri yang digunakan peserta.") } }],
+        },
+      },
+      {
+        id: nanoid(),
+        type: "callout",
+        data: {
+          intent: "tip",
+          title: "Standar K3 & Kedisiplinan",
+          content: "Peserta magang diwajibkan mematuhi SOP keselamatan dan seragam kerja yang berlaku.",
         },
       },
     ],
