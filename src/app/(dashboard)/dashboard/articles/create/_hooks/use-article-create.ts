@@ -49,8 +49,8 @@ export function useArticleCreate() {
         status: "draft",
       });
 
-      // Redirect to articles list (or builder workspace when implemented)
-      router.push(`/dashboard/articles?created=${created.id}`);
+      // Redirect to builder workspace
+      router.push(`/dashboard/articles/${created.id}/edit`);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal menyimpan draf artikel.";
       setFormError(msg);

@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import Image from "next/image";
-import { Building2, User2, Trash2, ImageIcon } from "lucide-react";
+import { Building2, User2, Trash2, ImageIcon, Edit3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Article } from "@/types/article";
 
@@ -80,13 +81,24 @@ export default function ArticleCardItem({ article, onDelete }: ArticleCardItemPr
             <span className="line-clamp-1">{article.author?.name || "Penulis"}</span>
           </div>
 
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="h-7 text-xs rounded-lg gap-1 px-2 font-medium"
+            >
+              <Link href={`/dashboard/articles/${article.id}/edit`}>
+                <Edit3 className="size-3" />
+                <span>Tulis</span>
+              </Link>
+            </Button>
             <Button
               type="button"
               variant="ghost"
               size="icon"
               onClick={() => onDelete(article)}
-              className="size-8 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30"
+              className="size-7 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30"
               title="Hapus Artikel"
             >
               <Trash2 className="size-3.5" />
