@@ -3,6 +3,9 @@ import { COMPANIES, DEPARTMENTS } from "@/lib/mock-data";
 import MapsClient from "./_components/maps-client";
 import { Badge } from "@/components/ui/badge";
 import { Map } from "lucide-react";
+import { getPublicCompanyMaps } from "@/services/public-api";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Peta Interaktif Sebaran Tempat PKL | SMKN 6 Malang",
@@ -10,10 +13,13 @@ export const metadata: Metadata = {
     "Eksplorasi peta interaktif lokasi tempat magang industri siswa SMKN 6 Malang. Cari perusahaan terdekat dari domisilimu dengan estimasi jarak akurat.",
 };
 
-export default function MapsPage() {
+export default async function MapsPage() {
+  const mapItems = await getPublicCompanyMaps();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const displayCompanies = mapItems.length > 0 ? (mapItems as any) : COMPANIES;
+
   return (
     <div className="py-24 mb-28 sm:py-32 container mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Header */}
       <div className="max-w-3xl mb-10">
         <Badge
           variant="outline"
@@ -30,8 +36,7 @@ export default function MapsPage() {
         </p>
       </div>
 
-      {/* Interactive Map & Sidebar */}
-      <MapsClient companies={COMPANIES} departments={DEPARTMENTS} />
+      <MapsClient companies={displayCompanies} departments={DEPARTMENTS} />
     </div>
   );
 }

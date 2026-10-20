@@ -1,13 +1,20 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Article } from "@/lib/mock-data";
-import { ArrowLeft, Calendar, Clock } from "lucide-react";
+import { ArrowLeft, Calendar, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
-export default function ArticleHeader({ article }: { article: Article }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function ArticleHeader({ article }: { article: any }) {
+  const companyName = article.company?.name || article.category || "Informasi PKL";
+  const authorName = article.author?.name || "Penulis";
+  const authorRole = article.author?.role_name || article.author?.role || "Siswa PKL";
+  const authorAvatar = article.author?.avatar_url || article.author?.avatar;
+  const dateStr = article.created_at
+    ? new Date(article.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })
+    : (article.publishedAt || "Terbaru");
+
   return (
     <div className="pt-24 sm:pt-28 pb-8">
-      {/* Back button */}
       <div className="mb-6">
         <Link
           href="/articles"
@@ -20,42 +27,37 @@ export default function ArticleHeader({ article }: { article: Article }) {
 
       <div className="space-y-4 max-w-4xl">
         <Badge className="bg-blue-600 text-white font-semibold">
-          {article.category}
+          {companyName}
         </Badge>
 
         <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
           {article.title}
         </h1>
 
-        <p className="text-base sm:text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-          {article.excerpt}
-        </p>
+        {article.excerpt && (
+          <p className="text-base sm:text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+            {article.excerpt}
+          </p>
+        )}
 
-        {/* Author & Meta */}
         <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-slate-200/80 dark:border-white/10 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
           <div className="flex items-center gap-2.5">
-            <div className="relative size-8 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700">
-              <Image
-                src={article.author.avatar}
-                alt={article.author.name}
-                fill
-                className="object-cover"
-              />
+            <div className="relative size-8 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+              {authorAvatar ? (
+                <Image src={authorAvatar} alt={authorName} fill className="object-cover" />
+              ) : (
+                <User className="size-4 text-slate-400" />
+              )}
             </div>
             <div>
-              <p className="font-semibold text-slate-900 dark:text-white">{article.author.name}</p>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">{article.author.role}</p>
+              <p className="font-semibold text-slate-900 dark:text-white">{authorName}</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">{authorRole}</p>
             </div>
           </div>
           <span>•</span>
           <div className="flex items-center gap-1.5">
             <Calendar className="size-4 text-blue-600 dark:text-blue-400" />
-            <span>{article.publishedAt}</span>
-          </div>
-          <span>•</span>
-          <div className="flex items-center gap-1.5">
-            <Clock className="size-4 text-sky-500" />
-            <span>{article.readTime}</span>
+            <span>{dateStr}</span>
           </div>
         </div>
       </div>

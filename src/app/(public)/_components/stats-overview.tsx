@@ -3,11 +3,23 @@ import { Building2, Users, GraduationCap, Award } from "lucide-react";
 
 const statIcons = [Building2, Users, GraduationCap, Award];
 
-export default function StatsOverview() {
+interface StatItem {
+  label: string;
+  value: string;
+  desc: string;
+}
+
+interface StatsOverviewProps {
+  stats?: StatItem[];
+}
+
+export default function StatsOverview({ stats }: StatsOverviewProps) {
+  const displayStats = stats && stats.length > 0 ? stats : STATS;
+
   return (
     <section className="relative z-20 -mt-10 mb-16 container mx-auto px-4 sm:px-6 lg:px-8">
       <div className="grid grid-cols-2 gap-3.5 sm:gap-6 lg:grid-cols-4">
-        {STATS.map((stat, i) => {
+        {displayStats.map((stat, i) => {
           const Icon = statIcons[i % statIcons.length];
           return (
             <div

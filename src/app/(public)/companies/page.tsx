@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import { COMPANIES, DEPARTMENTS } from "@/lib/mock-data";
 import CompaniesClient from "./_components/companies-client";
 import { Badge } from "@/components/ui/badge";
 import { Building2 } from "lucide-react";
+import { getPublicCompanies } from "@/services/public-api";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Direktori Perusahaan Mitra PKL | SMKN 6 Malang",
@@ -10,10 +12,11 @@ export const metadata: Metadata = {
     "Eksplorasi daftar mitra industri resmi SMKN 6 Malang. Cek kuota lowongan magang, kriteria keahlian, dan kirim pengajuan langsung secara online.",
 };
 
-export default function CompaniesPage() {
+export default async function CompaniesPage() {
+  const companies = await getPublicCompanies({ limit: 100 });
+
   return (
     <div className="py-24 sm:py-32 container mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Header */}
       <div className="max-w-3xl mb-12">
         <Badge
           variant="outline"
@@ -30,8 +33,7 @@ export default function CompaniesPage() {
         </p>
       </div>
 
-      {/* Client Filter & Grid */}
-      <CompaniesClient companies={COMPANIES} departments={DEPARTMENTS} />
+      <CompaniesClient companies={companies} />
     </div>
   );
 }
