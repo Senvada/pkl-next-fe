@@ -2,19 +2,19 @@
 
 import dynamic from "next/dynamic";
 import { useState, useMemo } from "react";
-import type { Company, Department } from "@/lib/mock-data";
+import type { Company } from "@/lib/mock-data";
+import type { Department } from "@/types/department";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { DepartmentDropdown } from "@/components/shared/department-dropdown";
 import MapsSidebar, { type CompanyWithDistance } from "./maps-sidebar";
 
 const DynamicLeafletMap = dynamic(() => import("./leaflet-map"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-full w-full items-center justify-center bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400">
-      <div className="flex flex-col items-center gap-3">
-        <div className="size-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
-        <span className="text-xs font-semibold">Memuat Peta Interaktif...</span>
-      </div>
+    <div className="flex h-full w-full items-center justify-center bg-slate-100 dark:bg-slate-900 text-slate-500 gap-3">
+      <div className="size-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+      <span className="text-xs font-semibold">Memuat Peta Interaktif...</span>
     </div>
   ),
 });
@@ -25,12 +25,8 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return (R * c).toFixed(1);
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))).toFixed(1);
 }
 
 const SCHOOL_POS = { lat: -7.9750644, lng: 112.6717543 };
@@ -48,13 +44,19 @@ export default function MapsClient({ companies, departments }: MapsClientProps) 
   const filteredCompanies = useMemo((): CompanyWithDistance[] => {
     return companies
       .filter((company) => {
+        const q = search.toLowerCase();
         const matchesSearch =
-          company.name.toLowerCase().includes(search.toLowerCase()) ||
-          company.city.toLowerCase().includes(search.toLowerCase()) ||
-          company.address.toLowerCase().includes(search.toLowerCase());
+          company.name.toLowerCase().includes(q) ||
+          (company.city ? company.city.toLowerCase().includes(q) : false) ||
+          (company.address ? company.address.toLowerCase().includes(q) : false);
 
         const matchesDept =
-          selectedDept === "ALL" || company.departments.includes(selectedDept);
+          selectedDept === "ALL" ||
+          (Array.isArray(company.departments) &&
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            company.departments.some((d: any) =>
+              typeof d === "string" ? d === selectedDept : d?.code === selectedDept
+            ));
 
         return matchesSearch && matchesDept;
       })
@@ -78,31 +80,12 @@ export default function MapsClient({ companies, departments }: MapsClientProps) 
           />
         </div>
 
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
-          <button
-            onClick={() => setSelectedDept("ALL")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors duration-150 ease-out cursor-pointer ${
-              selectedDept === "ALL"
-                ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
-                : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/80 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:border-white/10"
-            }`}
-          >
-            Semua Jurusan
-          </button>
-          {departments.map((dept) => (
-            <button
-              key={dept.id}
-              onClick={() => setSelectedDept(dept.code)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors duration-150 ease-out cursor-pointer ${
-                selectedDept === dept.code
-                  ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/80 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:border-white/10"
-              }`}
-            >
-              {dept.code}
-            </button>
-          ))}
-        </div>
+        <DepartmentDropdown
+          departments={departments}
+          selectedDept={selectedDept}
+          onDeptChange={setSelectedDept}
+          totalCount={companies.length}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start h-[750px]">

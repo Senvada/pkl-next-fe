@@ -6,12 +6,14 @@ import { CompanyFilters } from "./company-filters";
 import { Button } from "@/components/ui/button";
 import { Building2 } from "lucide-react";
 import type { Company } from "@/types/company";
+import type { Department } from "@/types/department";
 
 interface CompaniesClientProps {
   companies: Company[];
+  initialDepartments?: Department[];
 }
 
-export default function CompaniesClient({ companies }: CompaniesClientProps) {
+export default function CompaniesClient({ companies, initialDepartments = [] }: CompaniesClientProps) {
   const [search, setSearch] = useState("");
   const [selectedDept, setSelectedDept] = useState<string>("ALL");
   const [sortBy, setSortBy] = useState<"name" | "quota">("name");
@@ -23,8 +25,18 @@ export default function CompaniesClient({ companies }: CompaniesClientProps) {
         deptMap.set(d.code, (deptMap.get(d.code) || 0) + 1);
       });
     });
+
+    if (initialDepartments.length > 0) {
+      return initialDepartments.map((d) => ({
+        code: d.code,
+        name: d.name,
+        color: d.color,
+        count: deptMap.get(d.code) || 0,
+      }));
+    }
+
     return Array.from(deptMap.entries()).map(([code, count]) => ({ code, count }));
-  }, [companies]);
+  }, [companies, initialDepartments]);
 
   const filteredCompanies = useMemo(() => {
     return companies

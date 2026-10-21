@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import CompaniesClient from "./_components/companies-client";
 import { Badge } from "@/components/ui/badge";
 import { Building2 } from "lucide-react";
-import { getPublicCompanies } from "@/services/public-api";
+import { getPublicCompanies, getPublicDepartments } from "@/services/public-api";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +13,10 @@ export const metadata: Metadata = {
 };
 
 export default async function CompaniesPage() {
-  const companies = await getPublicCompanies({ limit: 100 });
+  const [companies, departments] = await Promise.all([
+    getPublicCompanies({ limit: 100 }),
+    getPublicDepartments(),
+  ]);
 
   return (
     <div className="py-24 sm:py-32 container mx-auto px-4 sm:px-6 lg:px-8">
@@ -33,7 +36,7 @@ export default async function CompaniesPage() {
         </p>
       </div>
 
-      <CompaniesClient companies={companies} />
+      <CompaniesClient companies={companies} initialDepartments={departments} />
     </div>
   );
 }

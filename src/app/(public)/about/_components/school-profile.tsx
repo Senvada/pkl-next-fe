@@ -1,7 +1,14 @@
 import { DEPARTMENTS } from "@/lib/mock-data";
+import type { Department } from "@/types/department";
 import { Check, MapPin, School } from "lucide-react";
 
-export default function SchoolProfile() {
+interface SchoolProfileProps {
+  departments?: Department[];
+}
+
+export default function SchoolProfile({ departments }: SchoolProfileProps) {
+  const displayDepartments = departments && departments.length > 0 ? departments : DEPARTMENTS;
+
   return (
     <section className="py-16 sm:py-24 bg-slate-100/70 dark:bg-[#121A24] border-y border-slate-200/80 dark:border-white/5 transition-colors">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -61,10 +68,10 @@ export default function SchoolProfile() {
                 Kompetensi yang siap berkontribusi langsung pada proyek nyata di perusahaan mitra:
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {DEPARTMENTS.map((dept) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 max-h-[480px] overflow-y-auto pr-1">
+                {displayDepartments.map((dept) => (
                   <div
-                    key={dept.id}
+                    key={dept.id || dept.code}
                     className="flex flex-col justify-between rounded-xl border border-slate-200/80 bg-slate-50/80 dark:border-white/5 dark:bg-white/5 p-4 transition hover:bg-slate-100 dark:hover:bg-white/10"
                   >
                     <div>
@@ -72,12 +79,21 @@ export default function SchoolProfile() {
                         <span className="text-xs font-bold text-slate-900 dark:text-white">
                           {dept.name}
                         </span>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${dept.badgeBg}`}>
+                        <span
+                          className="text-[10px] font-bold px-2 py-0.5 rounded border"
+                          style={{
+                            backgroundColor: dept.color ? `${dept.color}15` : undefined,
+                            borderColor: dept.color ? `${dept.color}40` : undefined,
+                            color: dept.color || undefined,
+                          }}
+                        >
                           {dept.code}
                         </span>
                       </div>
                       <p className="mt-2 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400 line-clamp-2">
-                        {dept.description}
+                        {"description" in dept && (dept as { description?: string }).description
+                          ? (dept as { description?: string }).description
+                          : `Program keahlian ${dept.name} dengan kurikulum terintegrasi standar kebutuhan industri.`}
                       </p>
                     </div>
                   </div>
