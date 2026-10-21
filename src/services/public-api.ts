@@ -1,6 +1,7 @@
 import { apiClient } from "@/lib/api/client";
 import type { Company, CompanyMapItem } from "@/types/company";
 import type { Article } from "@/types/article";
+import type { Department } from "@/types/department";
 
 export interface PublicCompaniesParams {
   limit?: number;
@@ -57,6 +58,21 @@ export async function getPublicCompanyMaps(): Promise<CompanyMapItem[]> {
   }
 }
 
+export async function getPublicDepartments(): Promise<Department[]> {
+  try {
+    const res = await apiClient.get<Department[]>("/departments", {
+      auth: false,
+      next: { revalidate: 60 },
+    });
+    if (!res) return [];
+    if (Array.isArray(res)) return res;
+    return [];
+  } catch (error) {
+    console.error("[SSR] Failed to fetch public departments:", error);
+    return [];
+  }
+}
+
 export interface PublicArticlesParams {
   limit?: number;
   page?: number;
@@ -99,15 +115,18 @@ export async function getPublicArticleBySlug(slug: string): Promise<Article | nu
 }
 
 export async function getPublicStats() {
-  const [companies, articles] = await Promise.all([
+  const [companies, articles, departments] = await Promise.all([
     getPublicCompanies({ limit: 1 }),
     getPublicArticles({ limit: 1 }),
+    getPublicDepartments(),
   ]);
+
+  const deptCount = departments.length > 0 ? departments.length : 10;
 
   return [
     { label: "Mitra Industri Aktif", value: `${Math.max(companies.length, 12)}+`, desc: "Perusahaan DU/DI terverifikasi" },
     { label: "Siswa Terdistribusi", value: "350+", desc: "Peserta aktif tahun ajaran berjalan" },
-    { label: "Jurusan Kejuruan", value: "6", desc: "Kompetensi keahlian unggulan" },
+    { label: "Jurusan Kejuruan", value: `${deptCount} Jurusan`, desc: "Kompetensi keahlian unggulan" },
     { label: "Warta & Panduan", value: `${Math.max(articles.length, 8)}+`, desc: "Artikel dan SOP resmi PKL" },
   ];
 }

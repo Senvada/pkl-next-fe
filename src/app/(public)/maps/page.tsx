@@ -3,7 +3,7 @@ import { COMPANIES, DEPARTMENTS } from "@/lib/mock-data";
 import MapsClient from "./_components/maps-client";
 import { Badge } from "@/components/ui/badge";
 import { Map } from "lucide-react";
-import { getPublicCompanyMaps } from "@/services/public-api";
+import { getPublicCompanyMaps, getPublicDepartments } from "@/services/public-api";
 
 export const dynamic = "force-dynamic";
 
@@ -14,9 +14,14 @@ export const metadata: Metadata = {
 };
 
 export default async function MapsPage() {
-  const mapItems = await getPublicCompanyMaps();
+  const [mapItems, departmentsData] = await Promise.all([
+    getPublicCompanyMaps(),
+    getPublicDepartments(),
+  ]);
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const displayCompanies = mapItems.length > 0 ? (mapItems as any) : COMPANIES;
+  const displayDepartments = departmentsData.length > 0 ? departmentsData : DEPARTMENTS;
 
   return (
     <div className="py-24 mb-28 sm:py-32 container mx-auto px-4 sm:px-6 lg:px-8">
@@ -36,7 +41,7 @@ export default async function MapsPage() {
         </p>
       </div>
 
-      <MapsClient companies={displayCompanies} departments={DEPARTMENTS} />
+      <MapsClient companies={displayCompanies} departments={displayDepartments} />
     </div>
   );
 }

@@ -44,7 +44,7 @@ export default function LeafletMap({
     const map = L.map(mapContainerRef.current, {
       center: SCHOOL_POS,
       zoom: 12,
-      scrollWheelZoom: false,
+      scrollWheelZoom: true,
     });
 
     // 100% Free OpenStreetMap Tile Layer
@@ -88,8 +88,8 @@ export default function LeafletMap({
       // Connecting line from Industry to SMKN 6 Malang
       const line = L.polyline([[comp.lat, comp.lng], SCHOOL_POS], {
         color: "#3B82F6",
-        weight: 2,
-        opacity: 0.65,
+        weight: 3,
+        opacity: 1,
         dashArray: "6, 6",
       }).addTo(layer);
 
@@ -128,7 +128,7 @@ export default function LeafletMap({
         line.setStyle({ color: "#2563EB", weight: 3.5, opacity: 1, dashArray: "" });
         line.bringToFront();
       } else {
-        line.setStyle({ color: "#93C5FD", weight: 1.5, opacity: 0.4, dashArray: "6, 6" });
+        line.setStyle({ color: "#93C5FD", weight: 3, opacity: 1, dashArray: "6, 6" });
       }
     });
   }, [selectedCompany]);
