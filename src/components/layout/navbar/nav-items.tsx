@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Building2, Home, Info, Map, Newspaper, PhoneCall } from "lucide-react";
+import { Building2, Home, Info, Map, Newspaper } from "lucide-react";
 
 export type NavUser = {
   name: string;
@@ -21,7 +21,7 @@ export const navItems: NavItem[] = [
   { index: "companies", nav: "Perusahaan", target: "/companies", icon: <Building2 className="size-4" /> },
   { index: "articles", nav: "Artikel", target: "/articles", icon: <Newspaper className="size-4" /> },
   { index: "maps", nav: "Peta", target: "/maps", icon: <Map className="size-4" /> },
-  { index: "contact", nav: "Kontak", target: "/contact", icon: <PhoneCall className="size-4" /> },
+  // { index: "contact", nav: "Kontak", target: "/contact", icon: <PhoneCall className="size-4" /> },
 ];
 
 export function getActiveIndex(pathname: string) {

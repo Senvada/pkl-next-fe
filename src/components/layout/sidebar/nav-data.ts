@@ -77,11 +77,11 @@ export const defaultNavData: SideNavGroup[] = [
         url: "/dashboard/profile",
         icon: UserCog,
       },
-      {
-        title: "Pengaturan",
-        url: "/dashboard/settings",
-        icon: Settings,
-      },
+      // {
+      //   title: "Pengaturan",
+      //   url: "/dashboard/settings",
+      //   icon: Settings,
+      // },
     ],
   },
 ]
