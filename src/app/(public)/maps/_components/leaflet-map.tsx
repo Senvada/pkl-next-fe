@@ -3,40 +3,36 @@
 import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import type { Company } from "@/lib/mock-data";
+import { SCHOOL_POS, schoolIcon, officeIcon, createCompanyPopupHtml } from "./maps-utils";
+
+if (typeof window !== "undefined") {
+  (window as unknown as { L: typeof L }).L = L;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  require("leaflet.markercluster");
+}
 
 interface LeafletMapProps {
   companies: Company[];
   selectedCompany: Company | null;
   onSelectCompany: (company: Company) => void;
+  showAllLines?: boolean;
 }
-
-const SCHOOL_POS: [number, number] = [-7.9750644, 112.6717543];
-
-const schoolIcon = L.icon({
-  iconUrl: "/markers/school-marker.svg",
-  iconSize: [44, 44],
-  iconAnchor: [22, 42],
-  popupAnchor: [0, -40],
-});
-
-const officeIcon = L.icon({
-  iconUrl: "/markers/office-marker.svg",
-  iconSize: [38, 38],
-  iconAnchor: [19, 36],
-  popupAnchor: [0, -35],
-});
 
 export default function LeafletMap({
   companies,
   selectedCompany,
   onSelectCompany,
+  showAllLines = false,
 }: LeafletMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
+  const clusterGroupRef = useRef<L.MarkerClusterGroup | null>(null);
   const markersRef = useRef<Record<string, L.Marker>>({});
-  const polylinesRef = useRef<Record<string, L.Polyline>>({});
-  const dataLayerRef = useRef<L.LayerGroup | null>(null);
+  const activeLineRef = useRef<L.Polyline | null>(null);
+  const allLinesLayerRef = useRef<L.LayerGroup | null>(null);
 
   useEffect(() => {
     if (!mapContainerRef.current || mapInstanceRef.current) return;
@@ -47,14 +43,12 @@ export default function LeafletMap({
       scrollWheelZoom: true,
     });
 
-    // 100% Free OpenStreetMap Tile Layer
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19,
     }).addTo(map);
 
-    // School Marker
-    L.marker(SCHOOL_POS, { icon: schoolIcon })
+    L.marker(SCHOOL_POS, { icon: schoolIcon, zIndexOffset: 1000 })
       .addTo(map)
       .bindPopup(
         `<div style="font-family: inherit; padding: 4px;">
@@ -63,7 +57,17 @@ export default function LeafletMap({
         </div>`
       );
 
-    dataLayerRef.current = L.layerGroup().addTo(map);
+    const cluster = L.markerClusterGroup({
+      maxClusterRadius: 45,
+      spiderfyOnMaxZoom: true,
+      showCoverageOnHover: false,
+      zoomToBoundsOnClick: true,
+    });
+    map.addLayer(cluster);
+    clusterGroupRef.current = cluster;
+
+    const allLinesLayer = L.layerGroup().addTo(map);
+    allLinesLayerRef.current = allLinesLayer;
     mapInstanceRef.current = map;
 
     return () => {
@@ -72,65 +76,71 @@ export default function LeafletMap({
     };
   }, []);
 
-  // Sync companies, markers, and connecting lines to school
+  // Sync markers in cluster
   useEffect(() => {
+    const cluster = clusterGroupRef.current;
     const map = mapInstanceRef.current;
-    const layer = dataLayerRef.current;
-    if (!map || !layer) return;
+    if (!cluster || !map) return;
 
-    layer.clearLayers();
+    cluster.clearLayers();
     markersRef.current = {};
-    polylinesRef.current = {};
 
     companies.forEach((comp) => {
       if (typeof comp.lat !== "number" || typeof comp.lng !== "number") return;
-
-      // Connecting line from Industry to SMKN 6 Malang
-      const line = L.polyline([[comp.lat, comp.lng], SCHOOL_POS], {
-        color: "#3B82F6",
-        weight: 3,
-        opacity: 1,
-        dashArray: "6, 6",
-      }).addTo(layer);
-
       const distanceKm = (map.distance([comp.lat, comp.lng], SCHOOL_POS) / 1000).toFixed(1);
-
       const marker = L.marker([comp.lat, comp.lng], { icon: officeIcon })
-        .addTo(layer)
-        .bindPopup(
-          `<div style="font-family: inherit; width: 200px; padding: 2px;">
-            <strong style="color: #0F172A; font-size: 13px; display: block;">${comp.name}</strong>
-            <span style="color: #2563EB; font-size: 10px; font-weight: 700; text-transform: uppercase;">${comp.category || "Mitra Industri"}</span>
-            <p style="color: #475569; font-size: 11px; margin: 4px 0; line-height: 1.3;">${comp.address || ""}</p>
-            <div style="margin-top: 6px; padding-top: 4px; border-top: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
-              <span style="color: #E11D48; font-weight: 600;">📍 ~${distanceKm} km</span>
-              <a href="/companies/${comp.slug}" style="color: #2563EB; font-weight: 700; text-decoration: none;">Detail &rarr;</a>
-            </div>
-          </div>`
-        );
+        .bindPopup(createCompanyPopupHtml(comp, distanceKm));
 
       marker.on("click", () => onSelectCompany(comp));
+      cluster.addLayer(marker);
       markersRef.current[comp.id] = marker;
-      polylinesRef.current[comp.id] = line;
     });
   }, [companies, onSelectCompany]);
 
-  // Highlight selected company and its connecting line
+  // Optional: All connecting lines toggle
   useEffect(() => {
-    if (!mapInstanceRef.current || !selectedCompany) return;
+    const allLinesLayer = allLinesLayerRef.current;
+    if (!allLinesLayer) return;
+    allLinesLayer.clearLayers();
 
-    mapInstanceRef.current.flyTo([selectedCompany.lat, selectedCompany.lng], 15, { duration: 0.8 });
-    const marker = markersRef.current[selectedCompany.id];
-    if (marker) marker.openPopup();
+    if (showAllLines) {
+      companies.forEach((comp) => {
+        if (typeof comp.lat !== "number" || typeof comp.lng !== "number") return;
+        L.polyline([[comp.lat, comp.lng], SCHOOL_POS], {
+          color: "#60A5FA",
+          weight: 1.5,
+          opacity: 0.4,
+          dashArray: "4, 6",
+        }).addTo(allLinesLayer);
+      });
+    }
+  }, [companies, showAllLines]);
 
-    Object.entries(polylinesRef.current).forEach(([id, line]) => {
-      if (id === selectedCompany.id) {
-        line.setStyle({ color: "#2563EB", weight: 3.5, opacity: 1, dashArray: "" });
-        line.bringToFront();
-      } else {
-        line.setStyle({ color: "#93C5FD", weight: 3, opacity: 1, dashArray: "6, 6" });
+  // Highlight selected company with focused single line
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    const cluster = clusterGroupRef.current;
+    if (!map || !selectedCompany) return;
+
+    if (typeof selectedCompany.lat === "number" && typeof selectedCompany.lng === "number") {
+      map.flyTo([selectedCompany.lat, selectedCompany.lng], 15, { duration: 0.8 });
+
+      const marker = markersRef.current[selectedCompany.id];
+      if (marker && cluster) {
+        cluster.zoomToShowLayer(marker, () => marker.openPopup());
       }
-    });
+
+      if (activeLineRef.current) map.removeLayer(activeLineRef.current);
+
+      const activeLine = L.polyline([[selectedCompany.lat, selectedCompany.lng], SCHOOL_POS], {
+        color: "#2563EB",
+        weight: 3.5,
+        opacity: 0.95,
+        dashArray: "6, 6",
+      }).addTo(map);
+      activeLine.bringToFront();
+      activeLineRef.current = activeLine;
+    }
   }, [selectedCompany]);
 
   return <div ref={mapContainerRef} className="h-full w-full" />;

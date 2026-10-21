@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useUsersPaginatedQuery } from "@/hooks/modules/user"
+import { useUsersInfiniteQuery } from "@/hooks/modules/user"
 import { useRolesQuery } from "@/hooks/modules/role"
 import { useDepartmentsQuery } from "@/hooks/modules/department"
 import { useCompaniesQuery } from "@/hooks/modules/company"
@@ -15,7 +15,7 @@ import { UserNotice } from "./_components/user-notice"
 import { UserMetrics } from "./_components/user-metrics"
 import { UserFilterBar } from "./_components/user-filter-bar"
 import { UserTable } from "./_components/user-table"
-import { UserPagination } from "./_components/user-pagination"
+import { InfiniteScrollFooter } from "@/components/shared/infinite-scroll-footer"
 import { UserFormDrawer } from "./_components/user-form-drawer"
 import { UserDetailDialog } from "./_components/user-detail-dialog"
 import { UserDeleteDialog } from "./_components/user-delete-dialog"
@@ -38,14 +38,20 @@ export default function UserManagementPage() {
   const filter = useUserFilter()
   const dialogs = useUserDialogs()
 
-  const { data: queryResult, isLoading, isError, error, refetch } = useUsersPaginatedQuery({
-    page: filter.page,
-    limit: filter.limit,
+  const {
+    items: users,
+    totalCount,
+    isLoading,
+    isError,
+    error,
+    isFetchingNextPage,
+    hasNextPage,
+    sentinelRef,
+    refetch,
+  } = useUsersInfiniteQuery({
+    limit: 15,
     filter: filter.filterPayload,
   })
-
-  const users = React.useMemo(() => queryResult?.users ?? [], [queryResult?.users])
-  const pagination = queryResult?.pagination
 
   const ops = useUserPageOperations({
     editingUser: dialogs.editingUser,
@@ -54,15 +60,12 @@ export default function UserManagementPage() {
     setUserToDelete: dialogs.setUserToDelete,
   })
 
-  const metrics = React.useMemo(() => {
-    const total = pagination?.total_rows ?? users.length
-    const siswaCount = users.filter((u) => u.role_name.toLowerCase() === "siswa").length
-    const industriCount = users.filter((u) => u.role_name.toLowerCase().includes("industri")).length
-    const guruAdminCount = users.filter(
-      (u) => u.role_name.toLowerCase() === "admin" || u.role_name.toLowerCase() === "guru"
-    ).length
-    return { total, siswaCount, industriCount, guruAdminCount }
-  }, [users, pagination])
+  const metrics = React.useMemo(() => ({
+    total: totalCount,
+    siswaCount: users.filter((u) => u.role_name.toLowerCase() === "siswa").length,
+    industriCount: users.filter((u) => u.role_name.toLowerCase().includes("industri")).length,
+    guruAdminCount: users.filter((u) => u.role_name.toLowerCase() === "admin" || u.role_name.toLowerCase() === "guru").length,
+  }), [users, totalCount])
 
   return (
     <div className="flex-1 min-h-0 flex flex-col w-full max-w-7xl mx-auto space-y-4">
@@ -74,13 +77,13 @@ export default function UserManagementPage() {
         searchTerm={filter.searchTerm}
         onSearchChange={filter.setSearchTerm}
         filterRole={filter.filterRole}
-        onRoleChange={(v) => { filter.setFilterRole(v); filter.setPage(1) }}
+        onRoleChange={filter.setFilterRole}
         filterDept={filter.filterDept}
-        onDeptChange={(v) => { filter.setFilterDept(v); filter.setPage(1) }}
+        onDeptChange={filter.setFilterDept}
         filterCompany={filter.filterCompany}
-        onCompanyChange={(v) => { filter.setFilterCompany(v); filter.setPage(1) }}
+        onCompanyChange={filter.setFilterCompany}
         filterStatus={filter.filterStatus}
-        onStatusChange={(v) => { filter.setFilterStatus(v); filter.setPage(1) }}
+        onStatusChange={filter.setFilterStatus}
         hasActiveFilters={filter.hasActiveFilters}
         onResetFilters={filter.handleResetFilters}
         roles={roles}
@@ -104,7 +107,14 @@ export default function UserManagementPage() {
         onEdit={dialogs.handleOpenEdit}
         onDelete={dialogs.handleOpenDelete}
       >
-        <UserPagination pagination={pagination} isBusy={ops.isBusy} onPageChange={filter.setPage} />
+        <InfiniteScrollFooter
+          sentinelRef={sentinelRef}
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          currentCount={users.length}
+          totalCount={totalCount}
+          itemLabel="pengguna"
+        />
       </UserTable>
 
       <UserFormDrawer

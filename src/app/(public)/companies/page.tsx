@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default async function CompaniesPage() {
   const [companies, departments] = await Promise.all([
-    getPublicCompanies({ limit: 100 }),
+    getPublicCompanies({ limit: 250 }),
     getPublicDepartments(),
   ]);
 

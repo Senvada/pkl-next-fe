@@ -132,3 +132,23 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
+
+/* Leaflet Marker Cluster Custom Theme */
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  background-color: rgba(37, 99, 235, 0.25) !important;
+  border-radius: 9999px !important;
+  backdrop-filter: blur(4px);
+}
+.marker-cluster-small div,
+.marker-cluster-medium div,
+.marker-cluster-large div {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  font-family: inherit !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { Building2, Navigation, ExternalLink } from "lucide-react";
 import type { Company } from "@/lib/mock-data";
@@ -19,9 +20,17 @@ export default function MapsSidebar({
   selectedCompany,
   onSelectCompany,
 }: MapsSidebarProps) {
+  const selectedCardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (selectedCompany && selectedCardRef.current) {
+      selectedCardRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }, [selectedCompany]);
+
   return (
-    <div className="lg:col-span-4 h-[350px] lg:h-full flex flex-col rounded-3xl border border-slate-200/80 bg-white dark:border-white/10 dark:bg-[#16212D] p-4 sm:p-5 shadow-sm dark:shadow-2xl">
-      <div className="pb-3 border-b border-slate-100 dark:border-white/5 flex items-center justify-between">
+    <div className="lg:col-span-4 h-[420px] lg:h-full min-h-0 flex flex-col rounded-3xl border border-slate-200/80 bg-white dark:border-white/10 dark:bg-[#16212D] p-4 sm:p-5 shadow-sm dark:shadow-2xl">
+      <div className="pb-3 border-b border-slate-100 dark:border-white/5 flex items-center justify-between shrink-0">
         <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <Building2 className="size-4 text-blue-600 dark:text-blue-400" />
           Daftar Mitra ({companies.length})
@@ -29,16 +38,17 @@ export default function MapsSidebar({
         <span className="text-[11px] text-slate-400">Klik untuk fokus</span>
       </div>
 
-      <div className="flex-1 overflow-y-auto space-y-3 pt-3 pr-1">
+      <div className="flex-1 min-h-0 overflow-y-auto space-y-3 pt-3 pr-1">
         {companies.map((comp) => {
           const isSelected = selectedCompany?.id === comp.id;
           return (
             <div
               key={comp.id}
+              ref={isSelected ? selectedCardRef : null}
               onClick={() => onSelectCompany(comp)}
               className={`p-3.5 rounded-2xl border transition-colors duration-150 ease-out cursor-pointer ${
                 isSelected
-                  ? "border-blue-500 bg-blue-50 dark:bg-blue-500/10 shadow-xs"
+                  ? "border-blue-500 bg-blue-50/80 dark:bg-blue-500/10 shadow-xs ring-1 ring-blue-500/20"
                   : "border-slate-100 bg-slate-50/80 hover:bg-slate-100 dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10"
               }`}
             >
@@ -48,7 +58,7 @@ export default function MapsSidebar({
                     {comp.name}
                   </h4>
                   <p className="text-[10px] text-blue-600 dark:text-sky-400 font-semibold uppercase mt-0.5">
-                    {comp.category}
+                    {comp.category || "Mitra Industri"}
                   </p>
                 </div>
 

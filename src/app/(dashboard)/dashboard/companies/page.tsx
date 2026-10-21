@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useCompaniesPaginatedQuery } from "@/hooks/modules/company"
+import { useCompaniesInfiniteQuery } from "@/hooks/modules/company"
 import { useDepartmentsQuery } from "@/hooks/modules/department"
 import { useProfileQuery } from "@/hooks/modules/profile"
 
@@ -13,7 +13,7 @@ import { CompanyNotice } from "./_components/company-notice"
 import { CompanyMetrics } from "./_components/company-metrics"
 import { CompanyFilterBar } from "./_components/company-filter-bar"
 import { CompanyTable } from "./_components/company-table"
-import { CompanyPagination } from "./_components/company-pagination"
+import { InfiniteScrollFooter } from "@/components/shared/infinite-scroll-footer"
 import { CompanyFormDrawer } from "./_components/company-form-drawer"
 import { CompanyDetailDialog } from "./_components/company-detail-dialog"
 import { CompanyDeleteDialog } from "./_components/company-delete-dialog"
@@ -34,14 +34,18 @@ export default function CompaniesManagementPage() {
   const filter = useCompanyFilter()
   const dialogs = useCompanyDialogs()
 
-  const { data: queryResult, isLoading, refetch } = useCompaniesPaginatedQuery({
-    page: filter.page,
-    limit: filter.limit,
+  const {
+    items: companies,
+    totalCount,
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    sentinelRef,
+    refetch,
+  } = useCompaniesInfiniteQuery({
+    limit: 15,
     filter: filter.filterPayload,
   })
-
-  const companies = React.useMemo(() => queryResult?.companies ?? [], [queryResult?.companies])
-  const pagination = queryResult?.pagination
 
   const ops = useCompanyPageOperations({
     editingCompany: dialogs.editingCompany,
@@ -51,11 +55,11 @@ export default function CompaniesManagementPage() {
   })
 
   const metrics = React.useMemo(() => ({
-    total: pagination?.total_rows ?? companies.length,
+    total: totalCount,
     activeCount: companies.filter((c) => c.status === "active").length,
     mappedCount: companies.filter((c) => c.lat != null && c.lng != null).length,
     totalMembers: companies.reduce((acc, c) => acc + (c.member_count ?? 0), 0),
-  }), [companies, pagination?.total_rows])
+  }), [companies, totalCount])
 
   if (!mounted) {
     return (
@@ -97,21 +101,26 @@ export default function CompaniesManagementPage() {
         departments={departments}
       />
 
-      <CompanyTable
-        companies={companies}
-        isLoading={isLoading}
-        isAdmin={isAdmin}
-        myCompanyId={isIndustri ? myCompanyId : null}
-        onDetail={dialogs.openDetailDialog}
-        onEdit={dialogs.openEditDialog}
-        onDelete={dialogs.openDeleteDialog}
-      />
+      <div className="overflow-hidden rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-[#16212D] shadow-xs">
+        <CompanyTable
+          companies={companies}
+          isLoading={isLoading}
+          isAdmin={isAdmin}
+          myCompanyId={isIndustri ? myCompanyId : null}
+          onDetail={dialogs.openDetailDialog}
+          onEdit={dialogs.openEditDialog}
+          onDelete={dialogs.openDeleteDialog}
+        />
 
-      <CompanyPagination
-        pagination={pagination}
-        isBusy={ops.isBusy}
-        onPageChange={filter.setPage}
-      />
+        <InfiniteScrollFooter
+          sentinelRef={sentinelRef}
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          currentCount={companies.length}
+          totalCount={totalCount}
+          itemLabel="perusahaan"
+        />
+      </div>
 
       <CompanyFormDrawer
         open={dialogs.formDialogOpen}

@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { apiClient } from "@/lib/api/client"
 import { authStore } from "@/lib/auth/auth-store"
+import { useInfiniteScrollQuery } from "@/hooks/shared/use-infinite-scroll-query"
 import type {
   UserItem,
   UserFilter,
@@ -71,6 +72,51 @@ export function useUsersPaginatedQuery({
     },
     enabled: isEnabled,
     staleTime: 60 * 1000,
+  })
+}
+
+/**
+ * Hook for infinite scroll user listings (dashboard and selectors)
+ */
+export function useUsersInfiniteQuery({
+  limit = 12,
+  filter = {},
+  enabled,
+  rootRef,
+}: {
+  limit?: number
+  filter?: UserFilter
+  enabled?: boolean
+  rootRef?: React.RefObject<Element | null>
+} = {}) {
+  const token = authStore.getToken()
+  const isEnabled = enabled !== undefined ? enabled : !!token
+
+  return useInfiniteScrollQuery<UserItem>({
+    queryKey: [...USERS_QUERY_KEY, "infinite", limit, filter],
+    queryFn: async (page, pageLimit) => {
+      const queryParams = new URLSearchParams()
+      queryParams.set("page", String(page))
+      queryParams.set("limit", String(pageLimit))
+
+      if (filter.search?.trim()) queryParams.set("search", filter.search.trim())
+      if (filter.role_id) queryParams.set("role_id", filter.role_id)
+      if (filter.department_id) queryParams.set("department_id", filter.department_id)
+      if (filter.company_id) queryParams.set("company_id", filter.company_id)
+      if (filter.status) queryParams.set("status", filter.status)
+
+      const res = await apiClient.getPaginated<UserItem>(
+        `/users?${queryParams.toString()}`
+      )
+
+      return {
+        items: Array.isArray(res.data) ? res.data : [],
+        pagination: res.meta?.pagination,
+      }
+    },
+    limit,
+    enabled: isEnabled,
+    rootRef,
   })
 }
 

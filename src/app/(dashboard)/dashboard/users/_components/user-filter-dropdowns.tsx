@@ -2,6 +2,7 @@ import * as React from "react"
 import type { Role } from "@/types/role"
 import type { Department } from "@/types/department"
 import type { Company } from "@/types/company"
+import { CompanySelect } from "@/components/shared/company-select"
 
 interface UserFilterDropdownsProps {
   filterRole: string
@@ -29,11 +30,10 @@ export function UserFilterDropdowns({
   onStatusChange,
   roles,
   departments,
-  companies,
   isAdmin,
 }: UserFilterDropdownsProps) {
   return (
-    <div className="pt-2.5 border-t border-border/50 grid grid-cols-2 sm:grid-cols-4 gap-2.5 animate-in fade-in-50 duration-150">
+    <div className="pt-2.5 border-t border-border/50 grid grid-cols-2 sm:grid-cols-4 gap-2.5 animate-in fade-in-50 duration-150 items-end">
       <FilterSelect label="Peran / Role" value={filterRole} onChange={onRoleChange}>
         <option value="all">Semua Role</option>
         {roles.map((r) => (<option key={r.id} value={r.id}>{r.name}</option>))}
@@ -45,10 +45,15 @@ export function UserFilterDropdowns({
       </FilterSelect>
 
       {isAdmin && (
-        <FilterSelect label="Mitra Industri" value={filterCompany} onChange={onCompanyChange}>
-          <option value="all">Semua Industri</option>
-          {companies.map((c) => (<option key={c.id} value={c.id}>{c.name}</option>))}
-        </FilterSelect>
+        <div className="space-y-1">
+          <label className="text-[10px] font-medium text-muted-foreground block">Mitra Industri</label>
+          <CompanySelect
+            value={filterCompany === "all" ? "" : filterCompany}
+            onChange={(val) => onCompanyChange(val || "all")}
+            placeholder="Semua Industri"
+            className="h-8 text-xs rounded-lg bg-background"
+          />
+        </div>
       )}
 
       <FilterSelect label="Status Akun" value={filterStatus} onChange={onStatusChange}>

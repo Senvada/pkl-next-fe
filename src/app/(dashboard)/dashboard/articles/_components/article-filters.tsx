@@ -2,11 +2,12 @@
 
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { CompanySelect } from "@/components/shared/company-select";
 import type { Company } from "@/types/company";
 
 interface ArticleFiltersProps {
   search: string;
-  onSearchChange: (search: string) => void;
+  onSearchChange: (value: string) => void;
   status: string;
   onStatusChange: (status: string) => void;
   companyId: string;
@@ -15,10 +16,9 @@ interface ArticleFiltersProps {
 }
 
 const STATUS_TABS = [
-  { value: "", label: "Semua" },
-  { value: "draft", label: "Draf" },
-  { value: "review", label: "Review" },
+  { value: "ALL", label: "Semua Status" },
   { value: "published", label: "Terbit" },
+  { value: "draft", label: "Draf" },
   { value: "archived", label: "Arsip" },
 ];
 
@@ -29,7 +29,6 @@ export default function ArticleFilters({
   onStatusChange,
   companyId,
   onCompanyChange,
-  companies,
 }: ArticleFiltersProps) {
   return (
     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
@@ -45,20 +44,15 @@ export default function ArticleFilters({
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        {/* Company Dropdown */}
-        <div className="relative">
-          <select
-            value={companyId}
-            onChange={(e) => onCompanyChange(e.target.value)}
-            className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer"
-          >
-            <option value="">Semua Perusahaan</option>
-            {companies.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
+        {/* Company Combobox with Infinite Scroll */}
+        <div className="w-[210px]">
+          <CompanySelect
+            value={companyId || null}
+            onChange={(val) => onCompanyChange(val || "")}
+            placeholder="Semua Perusahaan"
+            className="h-8 text-xs rounded-xl"
+            allowClear
+          />
         </div>
 
         {/* Status Tabs */}

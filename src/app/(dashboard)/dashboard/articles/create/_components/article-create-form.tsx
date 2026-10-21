@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Loader2, ArrowLeft, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CompanySelect } from "@/components/shared/company-select";
 import ArticleCoverSection from "./article-cover-section";
 import ArticleStyleSelector from "./article-style-selector";
 import type { useArticleCreate } from "../_hooks/use-article-create";
@@ -14,7 +15,7 @@ interface ArticleCreateFormProps {
   companies: Company[];
 }
 
-export default function ArticleCreateForm({ form, companies }: ArticleCreateFormProps) {
+export default function ArticleCreateForm({ form }: ArticleCreateFormProps) {
   const {
     title,
     setTitle,
@@ -31,9 +32,9 @@ export default function ArticleCreateForm({ form, companies }: ArticleCreateForm
   } = form;
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-6 shadow-sm">
+    <form onSubmit={handleSubmit} className="space-y-6">
       {formError && (
-        <div className="flex items-center gap-2 p-3 text-xs text-rose-700 bg-rose-50 dark:bg-rose-950/40 dark:text-rose-300 rounded-xl border border-rose-200 dark:border-rose-900/40">
+        <div className="flex items-center gap-2 p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs">
           <AlertCircle className="size-4 shrink-0" />
           <span>{formError}</span>
         </div>
@@ -42,7 +43,7 @@ export default function ArticleCreateForm({ form, companies }: ArticleCreateForm
       {/* Judul Artikel */}
       <div className="space-y-1.5">
         <label className="text-sm font-medium text-slate-700 dark:text-slate-200">
-          Judul Artikel <span className="text-rose-500">*</span>
+          Judul Artikel / Laporan <span className="text-rose-500">*</span>
         </label>
         <Input
           value={title}
@@ -53,24 +54,18 @@ export default function ArticleCreateForm({ form, companies }: ArticleCreateForm
         />
       </div>
 
-      {/* Perusahaan Mitra */}
+      {/* Perusahaan Mitra with Combobox Infinite Scroll */}
       <div className="space-y-1.5">
         <label className="text-sm font-medium text-slate-700 dark:text-slate-200">
           Perusahaan Mitra Terkait <span className="text-rose-500">*</span>
         </label>
-        <select
-          value={companyId}
-          onChange={(e) => setCompanyId(e.target.value)}
-          className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
-          required
-        >
-          <option value="">-- Pilih Perusahaan Mitra --</option>
-          {companies.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+        <CompanySelect
+          value={companyId || null}
+          onChange={(val) => setCompanyId(val || "")}
+          placeholder="Pilih perusahaan mitra tempat magang..."
+          className="h-10 text-sm rounded-xl"
+          allowClear={false}
+        />
       </div>
 
       {/* Cover Image Upload & 16:9 Cropper */}
@@ -84,21 +79,21 @@ export default function ArticleCreateForm({ form, companies }: ArticleCreateForm
         onChangeHeight={setStyleHeight}
       />
 
-      {/* Actions */}
-      <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-white/5">
-        <Link href="/dashboard/articles">
-          <Button type="button" variant="ghost" className="rounded-xl gap-2 text-xs">
-            <ArrowLeft className="size-3.5" />
-            Batal
-          </Button>
-        </Link>
+      {/* Action Buttons */}
+      <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-white/10">
+        <Button variant="ghost" asChild className="rounded-xl text-xs gap-1.5">
+          <Link href="/dashboard/articles">
+            <ArrowLeft className="size-3.5" /> Batal
+          </Link>
+        </Button>
+
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs px-6 gap-2 shadow-sm"
+          className="rounded-xl text-xs bg-sky-600 hover:bg-sky-700 text-white gap-2 px-5"
         >
           {isSubmitting && <Loader2 className="size-3.5 animate-spin" />}
-          Simpan Draf Artikel
+          Lanjut ke Editor Dokumen &rarr;
         </Button>
       </div>
     </form>

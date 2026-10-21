@@ -40,6 +40,7 @@ export default function MapsClient({ companies, departments }: MapsClientProps) 
   const [search, setSearch] = useState("");
   const [selectedDept, setSelectedDept] = useState("ALL");
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
+  const [showAllLines, setShowAllLines] = useState(false);
 
   const filteredCompanies = useMemo((): CompanyWithDistance[] => {
     return companies
@@ -88,27 +89,37 @@ export default function MapsClient({ companies, departments }: MapsClientProps) 
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start h-[750px]">
-        <div className="lg:col-span-8 h-[450px] lg:h-full rounded-3xl overflow-hidden border border-slate-200/80 dark:border-white/10 shadow-md dark:shadow-2xl relative">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:h-[750px]">
+        <div className="lg:col-span-8 h-[480px] sm:h-[550px] lg:h-full min-h-0 rounded-3xl overflow-hidden border border-slate-200/80 dark:border-white/10 shadow-md dark:shadow-2xl relative">
           <DynamicLeafletMap
             companies={filteredCompanies}
             selectedCompany={selectedCompany}
             onSelectCompany={(c) => setSelectedCompany(c)}
+            showAllLines={showAllLines}
           />
 
-          <div className="absolute top-4 right-4 z-1000 hidden sm:flex flex-col gap-1.5 rounded-2xl border border-slate-200/80 bg-white/95 dark:border-white/10 dark:bg-[#16212D]/95 p-3 backdrop-blur-md text-[11px] shadow-lg">
+          <div className="absolute top-4 right-4 z-1000 hidden sm:flex flex-col gap-2 rounded-2xl border border-slate-200/80 bg-white/95 dark:border-white/10 dark:bg-[#16212D]/95 p-3.5 backdrop-blur-md text-[11px] shadow-lg">
             <div className="flex items-center gap-2 text-slate-900 dark:text-white font-medium">
-              <span className="size-3 rounded-full bg-[#FF3D00] ring-2 ring-white" />
-              <span>Titik Kampus SMKN 6 Malang</span>
+              <span className="size-3 rounded-full bg-[#FF3D00] ring-2 ring-white shrink-0" />
+              <span>Titik SMKN 6 Malang</span>
             </div>
             <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-              <span className="size-3 rounded-full bg-[#008CFF] ring-2 ring-white" />
+              <span className="size-3 rounded-full bg-[#008CFF] ring-2 ring-white shrink-0" />
               <span>Mitra Industri Aktif</span>
             </div>
-            <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300 pt-0.5 border-t border-slate-100 dark:border-white/5">
-              <span className="w-4 h-0.5 border-b-2 border-dashed border-blue-500" />
-              <span>Garis Jarak ke Sekolah</span>
-            </div>
+            <button
+              type="button"
+              onClick={() => setShowAllLines((prev) => !prev)}
+              className="flex items-center justify-between gap-3 pt-1.5 border-t border-slate-100 dark:border-white/5 cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                <span className="w-3.5 h-0.5 border-b-2 border-dashed border-blue-500 shrink-0" />
+                <span>Garis ke Sekolah</span>
+              </div>
+              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${showAllLines ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300" : "bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-slate-300"}`}>
+                {showAllLines ? "Semua" : "Fokus"}
+              </span>
+            </button>
           </div>
         </div>
 

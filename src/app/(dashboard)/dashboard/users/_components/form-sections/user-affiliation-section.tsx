@@ -3,6 +3,7 @@
 import * as React from "react"
 import { GraduationCap } from "lucide-react"
 import { FormDrawerSection } from "@/components/shared/form-drawer"
+import { CompanySelect } from "@/components/shared/company-select"
 import type { Department } from "@/types/department"
 import type { Company } from "@/types/company"
 
@@ -23,7 +24,6 @@ export function UserAffiliationSection({
   formCompanyID,
   setFormCompanyID,
   departments,
-  companies,
   isAdmin,
   isIndustri,
 }: UserAffiliationSectionProps) {
@@ -57,19 +57,14 @@ export function UserAffiliationSection({
           <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
             Industri / Mitra PKL
           </label>
-          <select
-            value={formCompanyID}
-            onChange={(e) => setFormCompanyID(e.target.value)}
+          <CompanySelect
+            value={formCompanyID || null}
+            onChange={(val) => setFormCompanyID(val || "")}
             disabled={!isAdmin && isIndustri}
-            className="w-full h-9.5 text-xs rounded-xl border border-input bg-background px-3 text-foreground cursor-pointer focus:outline-hidden focus:ring-1 focus:ring-ring disabled:opacity-60"
-          >
-            <option value="">Tidak Ditautkan</option>
-            {companies.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
+            placeholder="Pilih mitra industri..."
+            className="h-9.5 text-xs rounded-xl"
+            allowClear
+          />
           {!isAdmin && isIndustri && (
             <span className="text-[10px] text-muted-foreground block">
               Terkunci otomatis pada industri Anda
