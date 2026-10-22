@@ -124,16 +124,6 @@ jobs:
     environment:
       name: production
     steps:
-      - name: Connect Tailscale
-        uses: tailscale/github-action@v3
-        with:
-          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
-
-      - name: Verify Network
-        run: |
-          tailscale status
-          ping -c 4 ${{ secrets.PRODUCTION_HOST }}
-
       - name: Trigger Deploy via SEHooks
         run: |
           curl -i --fail -sS -X POST "http://${{ secrets.STAGING_HOST }}:3001/webhook/f97783efb4ef7728e9537473a24d9baebdf2bfda6ac5cacd"
