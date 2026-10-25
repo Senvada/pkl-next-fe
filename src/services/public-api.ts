@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/api/client";
-import type { Company, CompanyMapItem } from "@/types/company";
+import type { Company, CompanyMapItem, CompanyIntern } from "@/types/company";
 import type { Article } from "@/types/article";
 import type { Department } from "@/types/department";
 
@@ -42,6 +42,18 @@ export async function getPublicCompanyBySlug(slug: string): Promise<Company | nu
     return res || null;
   } catch {
     return null;
+  }
+}
+
+export async function getPublicCompanyInterns(slugOrId: string): Promise<CompanyIntern[]> {
+  try {
+    const res = await apiClient.get<CompanyIntern[]>(`/companies/slug/${slugOrId}/interns`, {
+      auth: false,
+      next: { revalidate: 60 },
+    });
+    return Array.isArray(res) ? res : [];
+  } catch {
+    return [];
   }
 }
 

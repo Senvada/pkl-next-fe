@@ -20,7 +20,7 @@ export const ProfileSummaryCard = React.memo(function ProfileSummaryCard({ user 
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
           <div className="relative group">
             <Avatar className="size-24 sm:size-28 rounded-2xl border-2 border-border shadow-md">
-              {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={user.name} className="object-cover" />}
+              {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={user.name} className="object-cover rounded-2xl" />}
               <AvatarFallback className="rounded-2xl bg-blue-500/10 text-2xl font-bold text-blue-600 dark:text-blue-400">
                 {initials}
               </AvatarFallback>

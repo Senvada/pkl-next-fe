@@ -1,3 +1,10 @@
+export interface DepartmentSummary {
+  id: string;
+  name: string;
+  code: string;
+  color?: string;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -7,6 +14,9 @@ export interface User {
   role_id: string;
   role_name: string;
   department_id?: string | null;
+  department_ids?: string[];
+  departments?: DepartmentSummary[];
+  permissions?: Record<string, Record<string, boolean>>;
   company_id?: string | null;
   google_bound: boolean;
   created_at?: string;

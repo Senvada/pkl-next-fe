@@ -42,7 +42,6 @@ function UserFormDrawerContent({
   editingUser,
   roles,
   departments,
-  companies,
   isAdmin,
   isIndustri,
   myCompanyId,
@@ -93,9 +92,13 @@ function UserFormDrawerContent({
 
         <UserAffiliationSection
           formDeptID={form.formDeptID} setFormDeptID={form.setFormDeptID}
+          formDeptIDs={form.formDeptIDs} setFormDeptIDs={form.setFormDeptIDs}
+          isMultiDeptRole={form.isMultiDeptRole}
+          isStudentRole={form.isStudentRole}
           formCompanyID={form.formCompanyID} setFormCompanyID={form.setFormCompanyID}
+          formParentID={form.formParentID} setFormParentID={form.setFormParentID}
+          formParentName={form.formParentName} setFormParentName={form.setFormParentName}
           departments={departments}
-          companies={companies}
           isAdmin={isAdmin}
           isIndustri={isIndustri}
         />

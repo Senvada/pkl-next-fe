@@ -13,7 +13,7 @@ interface RoleModuleCardProps {
   isSaving: boolean
   forceExpanded?: boolean
   onToggleAll: (moduleKey: string, actions: string[]) => void
-  onTogglePermission: (moduleKey: string, actionKey: string, actions: string[]) => void
+  onTogglePermission: (moduleKey: string, actionKey: string) => void
 }
 
 export const RoleModuleCard = React.memo(function RoleModuleCard({
@@ -115,7 +115,7 @@ export const RoleModuleCard = React.memo(function RoleModuleCard({
                 <Switch
                   checked={isChecked}
                   onCheckedChange={() =>
-                    onTogglePermission(moduleKey, actionKey, actionKeys)
+                    onTogglePermission(moduleKey, actionKey)
                   }
                   disabled={isSaving}
                 />

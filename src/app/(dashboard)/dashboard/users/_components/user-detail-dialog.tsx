@@ -87,7 +87,9 @@ export const UserDetailDialog = React.memo(function UserDetailDialog({ open, onO
 
             {user.parent_name && (
               <div className="p-3 rounded-xl border border-border bg-muted/20 text-xs">
-                <span className="text-[11px] text-muted-foreground block">Pembimbing Industri (PIC)</span>
+                <span className="text-[11px] text-muted-foreground block">
+                  {user.role_name?.toLowerCase() === "siswa" ? "Guru / Pembimbing PKL" : "Pembimbing Industri (PIC)"}
+                </span>
                 <span className="font-semibold text-foreground">{user.parent_name}</span>
               </div>
             )}

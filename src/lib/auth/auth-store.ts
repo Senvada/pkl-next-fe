@@ -27,6 +27,14 @@ function getInitialToken(): string | null {
 // Initialize on module load if in browser
 if (typeof window !== "undefined") {
   accessToken = getInitialToken()
+
+  // Listen for auth token changes from other open tabs
+  window.addEventListener("storage", (event) => {
+    if (event.key === ACCESS_TOKEN_KEY) {
+      accessToken = event.newValue
+      listeners.forEach((listener) => listener(event.newValue))
+    }
+  })
 }
 
 export const authStore = {
@@ -53,7 +61,7 @@ export const authStore = {
         } catch {
           // Ignore
         }
-        document.cookie = `${ACCESS_TOKEN_KEY}=; path=/; max-age=0; SameSite=Lax`
+        document.cookie = `${ACCESS_TOKEN_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0; SameSite=Lax`
       }
     }
 

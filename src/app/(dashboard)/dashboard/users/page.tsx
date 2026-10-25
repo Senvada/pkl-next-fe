@@ -26,10 +26,9 @@ export default function UserManagementPage() {
   const mounted = React.useSyncExternalStore(emptySubscribe, () => true, () => false)
 
   const { data: myProfile } = useProfileQuery()
-  const isAdmin = myProfile?.role_name?.toLowerCase() === "admin"
-  const isIndustri =
-    myProfile?.role_name?.toLowerCase() === "industri" ||
-    myProfile?.role_name?.toLowerCase() === "pembimbing industri"
+  const roleName = myProfile?.role_name?.toLowerCase() || ""
+  const isAdmin = roleName === "admin"
+  const isIndustri = roleName === "industri" || roleName === "pembimbing industri"
 
   const { data: roles = [] } = useRolesQuery()
   const { data: departments = [] } = useDepartmentsQuery()
@@ -37,6 +36,7 @@ export default function UserManagementPage() {
 
   const filter = useUserFilter()
   const dialogs = useUserDialogs()
+  const tableContainerRef = React.useRef<HTMLDivElement | null>(null)
 
   const {
     items: users,
@@ -51,7 +51,14 @@ export default function UserManagementPage() {
   } = useUsersInfiniteQuery({
     limit: 15,
     filter: filter.filterPayload,
+    rootRef: tableContainerRef,
   })
+
+  React.useEffect(() => {
+    if (tableContainerRef.current) {
+      tableContainerRef.current.scrollTop = 0
+    }
+  }, [filter.filterPayload])
 
   const ops = useUserPageOperations({
     editingUser: dialogs.editingUser,
@@ -64,7 +71,7 @@ export default function UserManagementPage() {
     total: totalCount,
     siswaCount: users.filter((u) => u.role_name.toLowerCase() === "siswa").length,
     industriCount: users.filter((u) => u.role_name.toLowerCase().includes("industri")).length,
-    guruAdminCount: users.filter((u) => u.role_name.toLowerCase() === "admin" || u.role_name.toLowerCase() === "guru").length,
+    guruAdminCount: users.filter((u) => ["admin", "guru"].includes(u.role_name.toLowerCase())).length,
   }), [users, totalCount])
 
   return (
@@ -74,74 +81,45 @@ export default function UserManagementPage() {
       <UserMetrics metrics={metrics} mounted={mounted} />
 
       <UserFilterBar
-        searchTerm={filter.searchTerm}
-        onSearchChange={filter.setSearchTerm}
-        filterRole={filter.filterRole}
-        onRoleChange={filter.setFilterRole}
-        filterDept={filter.filterDept}
-        onDeptChange={filter.setFilterDept}
-        filterCompany={filter.filterCompany}
-        onCompanyChange={filter.setFilterCompany}
-        filterStatus={filter.filterStatus}
-        onStatusChange={filter.setFilterStatus}
-        hasActiveFilters={filter.hasActiveFilters}
-        onResetFilters={filter.handleResetFilters}
-        roles={roles}
-        departments={departments}
-        companies={companies}
-        isAdmin={isAdmin}
+        searchTerm={filter.searchTerm} onSearchChange={filter.setSearchTerm}
+        filterRole={filter.filterRole} onRoleChange={filter.setFilterRole}
+        filterDept={filter.filterDept} onDeptChange={filter.setFilterDept}
+        filterCompany={filter.filterCompany} onCompanyChange={filter.setFilterCompany}
+        filterStatus={filter.filterStatus} onStatusChange={filter.setFilterStatus}
+        hasActiveFilters={filter.hasActiveFilters} onResetFilters={filter.handleResetFilters}
+        roles={roles} departments={departments} companies={companies} isAdmin={isAdmin}
       />
 
       <UserTable
-        users={users}
-        isLoading={isLoading}
-        isError={isError}
-        error={error}
-        mounted={mounted}
-        isBusy={ops.isBusy}
-        myProfile={myProfile}
-        hasActiveFilters={filter.hasActiveFilters}
-        onResetFilters={filter.handleResetFilters}
-        onRefetch={refetch}
-        onDetail={dialogs.handleOpenDetail}
-        onEdit={dialogs.handleOpenEdit}
-        onDelete={dialogs.handleOpenDelete}
+        scrollContainerRef={tableContainerRef}
+        users={users} isLoading={isLoading} isError={isError} error={error}
+        mounted={mounted} isBusy={ops.isBusy} myProfile={myProfile}
+        hasActiveFilters={filter.hasActiveFilters} onResetFilters={filter.handleResetFilters}
+        onRefetch={refetch} onDetail={dialogs.handleOpenDetail}
+        onEdit={dialogs.handleOpenEdit} onDelete={dialogs.handleOpenDelete}
       >
         <InfiniteScrollFooter
-          sentinelRef={sentinelRef}
-          hasNextPage={hasNextPage}
+          sentinelRef={sentinelRef} hasNextPage={hasNextPage}
           isFetchingNextPage={isFetchingNextPage}
-          currentCount={users.length}
-          totalCount={totalCount}
-          itemLabel="pengguna"
+          currentCount={users.length} totalCount={totalCount} itemLabel="pengguna"
         />
       </UserTable>
 
       <UserFormDrawer
-        open={dialogs.formDialogOpen}
-        onOpenChange={dialogs.setFormDialogOpen}
-        editingUser={dialogs.editingUser}
-        roles={roles}
-        departments={departments}
-        companies={companies}
-        isAdmin={isAdmin}
-        isIndustri={isIndustri}
-        myCompanyId={myProfile?.company_id}
-        isSaving={ops.isSaving}
-        onSave={ops.handleSaveUser}
+        open={dialogs.formDialogOpen} onOpenChange={dialogs.setFormDialogOpen}
+        editingUser={dialogs.editingUser} roles={roles} departments={departments}
+        companies={companies} isAdmin={isAdmin} isIndustri={isIndustri}
+        myCompanyId={myProfile?.company_id} isSaving={ops.isSaving} onSave={ops.handleSaveUser}
       />
 
       <UserDetailDialog
-        open={dialogs.detailDialogOpen}
-        onOpenChange={dialogs.setDetailDialogOpen}
+        open={dialogs.detailDialogOpen} onOpenChange={dialogs.setDetailDialogOpen}
         user={dialogs.viewingUser}
       />
 
       <UserDeleteDialog
-        open={dialogs.deleteDialogOpen}
-        onOpenChange={dialogs.setDeleteDialogOpen}
-        user={dialogs.userToDelete}
-        isDeleting={ops.isDeletePending}
+        open={dialogs.deleteDialogOpen} onOpenChange={dialogs.setDeleteDialogOpen}
+        user={dialogs.userToDelete} isDeleting={ops.isDeletePending}
         onConfirm={ops.handleConfirmDelete}
       />
     </div>

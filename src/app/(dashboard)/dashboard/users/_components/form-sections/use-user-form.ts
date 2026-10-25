@@ -40,13 +40,39 @@ export function useUserForm({
   const [formDeptID, setFormDeptID] = React.useState(
     editingUser ? editingUser.department_id || "" : ""
   )
+  const [formDeptIDs, setFormDeptIDs] = React.useState<string[]>(() => {
+    if (editingUser?.department_ids && editingUser.department_ids.length > 0) {
+      return editingUser.department_ids
+    }
+    if (editingUser?.department_id) {
+      return [editingUser.department_id]
+    }
+    return []
+  })
   const [formCompanyID, setFormCompanyID] = React.useState(
     editingUser ? editingUser.company_id || "" : myCompanyId || ""
+  )
+  const [formParentID, setFormParentID] = React.useState(
+    editingUser ? editingUser.parent_id || "" : ""
+  )
+  const [formParentName, setFormParentName] = React.useState(
+    editingUser ? editingUser.parent_name || "" : ""
   )
   const [formStatus, setFormStatus] = React.useState<string>(
     editingUser ? editingUser.status || "active" : "active"
   )
   const [formError, setFormError] = React.useState<string | null>(null)
+
+  const selectedRole = React.useMemo(() => {
+    return roles.find((r) => r.id === formRoleID)
+  }, [roles, formRoleID])
+
+  const isMultiDeptRole = Boolean(
+    selectedRole && ["pembimbing", "guru"].includes(selectedRole.name.toLowerCase())
+  )
+  const isStudentRole = Boolean(
+    selectedRole && selectedRole.name.toLowerCase() === "siswa"
+  )
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -62,14 +88,21 @@ export function useUserForm({
     }
     if (!formRoleID) return setFormError("Role pengguna wajib dipilih")
 
+    const resolvedDeptIDs = isMultiDeptRole
+      ? formDeptIDs
+      : formDeptID ? [formDeptID] : []
+    const resolvedPrimaryDeptID = resolvedDeptIDs[0] || null
+
     try {
       if (editingUser) {
         const payload: UpdateUserPayload = {
           name: formName.trim(),
           email: formEmail.trim(),
           role_id: formRoleID,
-          department_id: formDeptID || null,
+          department_id: resolvedPrimaryDeptID,
+          department_ids: resolvedDeptIDs,
           company_id: formCompanyID || null,
+          parent_id: formParentID || null,
           status: formStatus,
         }
         if (formPassword) payload.password = formPassword
@@ -80,8 +113,10 @@ export function useUserForm({
           email: formEmail.trim(),
           password: formPassword,
           role_id: formRoleID,
-          department_id: formDeptID || null,
+          department_id: resolvedPrimaryDeptID,
+          department_ids: resolvedDeptIDs,
           company_id: formCompanyID || null,
+          parent_id: formParentID || null,
           status: formStatus,
         }
         await onSave({ isEdit: false, payload, name: formName })
@@ -98,9 +133,12 @@ export function useUserForm({
     formPassword, setFormPassword,
     formRoleID, setFormRoleID,
     formDeptID, setFormDeptID,
+    formDeptIDs, setFormDeptIDs,
     formCompanyID, setFormCompanyID,
+    formParentID, setFormParentID,
+    formParentName, setFormParentName,
     formStatus, setFormStatus,
-    formError,
-    handleSubmit,
+    isMultiDeptRole, isStudentRole,
+    formError, handleSubmit,
   }
 }

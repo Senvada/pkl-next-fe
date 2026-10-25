@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPublicCompanyBySlug } from "@/services/public-api";
+import { getPublicCompanyBySlug, getPublicCompanyInterns } from "@/services/public-api";
 import { COMPANIES } from "@/lib/mock-data";
 import CompanyHero from "./_components/company-hero";
 import CompanyInfoCards from "./_components/company-info-cards";
+import { CompanyInternsSection } from "@/components/shared/company-interns";
 import CompanyContentBody from "./_components/company-content-body";
 
 interface PageProps {
@@ -16,7 +17,7 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const rawCompany = (await getPublicCompanyBySlug(slug)) ||  COMPANIES.find((c) => c.slug === slug);
+  const rawCompany = (await getPublicCompanyBySlug(slug)) || COMPANIES.find((c) => c.slug === slug);
 
   if (!rawCompany) {
     return { title: "Perusahaan Tidak Ditemukan" };
@@ -38,7 +39,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function CompanyDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const company = (await getPublicCompanyBySlug(slug)) || COMPANIES.find((c) => c.slug === slug);
+  const [company, interns] = await Promise.all([
+    getPublicCompanyBySlug(slug).then((c) => c || COMPANIES.find((item) => item.slug === slug)),
+    getPublicCompanyInterns(slug),
+  ]);
 
   if (!company) {
     notFound();
@@ -49,6 +53,11 @@ export default async function CompanyDetailPage({ params }: PageProps) {
       <CompanyHero company={company} />
       <CompanyInfoCards company={company} />
       <CompanyContentBody company={company} />
+      <CompanyInternsSection
+        companyName={company.name}
+        slug={slug}
+        initialInterns={interns}
+      />
     </article>
   );
 }

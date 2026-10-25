@@ -95,3 +95,36 @@ export interface ResolveMapsResponse {
   lng: number
 }
 
+export interface CompanyInternDepartment {
+  id: string
+  name: string
+  code: string
+  color: string
+}
+
+export interface CompanyInternSupervisor {
+  id: string
+  name: string
+  avatar_url?: string | null
+  role_name: string
+  department?: CompanyInternDepartment | null
+}
+
+export interface CompanyInternArticle {
+  id: string
+  title: string
+  slug: string
+  cover_url?: string | null
+  published_at?: string | null
+  created_at: string
+}
+
+export interface CompanyIntern {
+  id: string
+  name: string
+  avatar_url?: string | null
+  department?: CompanyInternDepartment | null
+  supervisor?: CompanyInternSupervisor | null
+  articles: CompanyInternArticle[]
+}
+

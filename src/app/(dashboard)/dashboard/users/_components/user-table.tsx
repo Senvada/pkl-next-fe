@@ -21,7 +21,8 @@ interface UserTableProps {
   onDetail: (user: UserItem) => void
   onEdit: (user: UserItem) => void
   onDelete: (user: UserItem) => void
-  children?: React.ReactNode // for pagination
+  children?: React.ReactNode
+  scrollContainerRef?: React.RefObject<HTMLDivElement | null>
 }
 
 export function UserTable({
@@ -39,10 +40,11 @@ export function UserTable({
   onEdit,
   onDelete,
   children,
+  scrollContainerRef,
 }: UserTableProps) {
   return (
-    <Card className="rounded-2xl border border-border shadow-xs bg-card/60 flex flex-col overflow-hidden">
-      <CardContent className="p-0">
+    <Card className="rounded-2xl border border-border shadow-xs bg-card/60 flex flex-col flex-1 min-h-0 overflow-hidden">
+      <CardContent className="p-0 flex flex-col flex-1 min-h-0">
         {(!mounted || isLoading) && (
           <div className="p-6 space-y-3">
             <Skeleton className="h-12 w-full rounded-xl" />
@@ -95,16 +97,20 @@ export function UserTable({
         )}
 
         {mounted && !isLoading && users.length > 0 && (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-foreground">
-              <thead className="bg-muted/40 uppercase tracking-wider text-[10px] font-bold text-muted-foreground border-b border-border">
+          <div
+            ref={scrollContainerRef}
+            tabIndex={0}
+            className="overflow-auto max-h-[calc(100dvh-21rem)] min-h-[360px] relative focus:outline-hidden"
+          >
+            <table className="w-full min-w-[850px] text-left text-xs text-foreground border-separate border-spacing-0">
+              <thead className="sticky top-0 z-20 shadow-xs">
                 <tr>
-                  <th className="px-4 py-3">Pengguna</th>
-                  <th className="px-4 py-3">Peran / Role</th>
-                  <th className="px-4 py-3">Jurusan</th>
-                  <th className="px-4 py-3">Industri Mitra</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3 text-right">Aksi</th>
+                  <th scope="col" className="sticky top-0 z-20 bg-muted dark:bg-[#16212D] text-muted-foreground uppercase tracking-wider text-[10px] font-bold px-4 py-3 border-b border-border min-w-[240px]">Pengguna</th>
+                  <th scope="col" className="sticky top-0 z-20 bg-muted dark:bg-[#16212D] text-muted-foreground uppercase tracking-wider text-[10px] font-bold px-4 py-3 border-b border-border min-w-[130px]">Peran / Role</th>
+                  <th scope="col" className="sticky top-0 z-20 bg-muted dark:bg-[#16212D] text-muted-foreground uppercase tracking-wider text-[10px] font-bold px-4 py-3 border-b border-border min-w-[170px]">Jurusan</th>
+                  <th scope="col" className="sticky top-0 z-20 bg-muted dark:bg-[#16212D] text-muted-foreground uppercase tracking-wider text-[10px] font-bold px-4 py-3 border-b border-border min-w-[190px]">Industri Mitra</th>
+                  <th scope="col" className="sticky top-0 z-20 bg-muted dark:bg-[#16212D] text-muted-foreground uppercase tracking-wider text-[10px] font-bold px-4 py-3 border-b border-border min-w-[110px]">Status</th>
+                  <th scope="col" className="sticky top-0 z-20 bg-muted dark:bg-[#16212D] text-muted-foreground uppercase tracking-wider text-[10px] font-bold px-4 py-3 border-b border-border min-w-[100px] text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
@@ -122,10 +128,10 @@ export function UserTable({
                 ))}
               </tbody>
             </table>
+
+            {children}
           </div>
         )}
-
-        {children}
       </CardContent>
     </Card>
   )

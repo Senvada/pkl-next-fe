@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Newspaper, Plus } from "lucide-react";
+import { Newspaper, Plus, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ArticleHeaderProps {
   totalCount?: number;
+  isUnboundSiswa?: boolean;
 }
 
-export default function ArticleHeader({ totalCount }: ArticleHeaderProps) {
+export default function ArticleHeader({ totalCount, isUnboundSiswa }: ArticleHeaderProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
       <div className="space-y-1">
@@ -30,12 +31,23 @@ export default function ArticleHeader({ totalCount }: ArticleHeaderProps) {
         </p>
       </div>
 
-      <Link href="/dashboard/articles/create">
-        <Button className="rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs gap-1.5 px-4 shadow-sm">
-          <Plus className="size-4" />
-          Buat Artikel Baru
+      {isUnboundSiswa ? (
+        <Button
+          disabled
+          className="rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-500 text-xs gap-1.5 px-4 shadow-sm cursor-not-allowed opacity-70"
+          title="Hubungkan mitra industri terlebih dahulu untuk membuat artikel"
+        >
+          <Lock className="size-3.5" />
+          Belum Terikat Mitra
         </Button>
-      </Link>
+      ) : (
+        <Link href="/dashboard/articles/create">
+          <Button className="rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs gap-1.5 px-4 shadow-sm">
+            <Plus className="size-4" />
+            Buat Artikel Baru
+          </Button>
+        </Link>
+      )}
     </div>
   );
 }

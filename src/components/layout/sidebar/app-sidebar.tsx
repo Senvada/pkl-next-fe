@@ -17,6 +17,8 @@ import SidebarHeaderSection from "./sidebar-header-section"
 import NavItem from "./nav-item"
 import SidebarFooterSection, { type SidebarUser } from "./sidebar-footer-section"
 import { defaultNavData, type SideNavGroup } from "./nav-data"
+import { useCurrentUser } from "@/hooks/modules/auth/useCurrentUser"
+import { canAccessFeature, isUserAdmin } from "@/lib/auth/permissions"
 
 export interface AppSidebarProps
   extends React.ComponentProps<typeof Sidebar> {
@@ -32,6 +34,25 @@ export function AppSidebar({
   collapsible = "icon",
   ...props
 }: AppSidebarProps) {
+  const currentUser = useCurrentUser()
+
+  const filteredNavData = React.useMemo(() => {
+    return navData
+      .map((group) => {
+        const items = group.items.filter((item) => {
+          if (item.adminOnly) {
+            return isUserAdmin(currentUser)
+          }
+          if (item.module) {
+            return canAccessFeature(currentUser, item.module)
+          }
+          return true
+        })
+        return { ...group, items }
+      })
+      .filter((group) => group.items.length > 0)
+  }, [navData, currentUser])
+
   return (
     <Sidebar collapsible={collapsible} {...props}>
       {/* Top Header Logo */}
@@ -41,7 +62,7 @@ export function AppSidebar({
 
       {/* Nav Menu Content */}
       <SidebarContent className="px-2 py-3">
-        {navData.map((group, idx) => (
+        {filteredNavData.map((group, idx) => (
           <SidebarGroup key={group.group} className="p-0 mb-3">
             <SidebarGroupLabel className="px-2.5 text-[11px] font-bold">
               {group.group}

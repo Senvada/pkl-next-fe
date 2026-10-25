@@ -6,6 +6,7 @@ import { authStore } from "@/lib/auth/auth-store"
 import { useInfiniteScrollQuery } from "@/hooks/shared/use-infinite-scroll-query"
 import type {
   Company,
+  CompanyIntern,
   CompanyFilter,
   CompanyMapItem,
   CreateCompanyPayload,
@@ -276,6 +277,22 @@ export function useResolveGoogleMaps() {
     ): Promise<ResolveMapsResponse> => {
       return apiClient.post<ResolveMapsResponse>("/companies/maps/resolve", payload)
     },
+  })
+}
+
+export function useCompanyInternsQuery(slugOrId?: string, isId = false) {
+  return useQuery({
+    queryKey: [...COMPANIES_QUERY_KEY, "interns", slugOrId],
+    queryFn: async (): Promise<CompanyIntern[]> => {
+      if (!slugOrId) return []
+      const endpoint = isId
+        ? `/companies/${slugOrId}/interns`
+        : `/companies/slug/${slugOrId}/interns`
+      const res = await apiClient.get<CompanyIntern[]>(endpoint, { auth: false })
+      return Array.isArray(res) ? res : []
+    },
+    enabled: !!slugOrId,
+    staleTime: 60 * 1000,
   })
 }
 

@@ -22,7 +22,11 @@ export function useLogout() {
       authStore.clearToken()
       clearCurrentUser()
       queryClient.clear()
-      router.push("/login")
+      if (typeof window !== "undefined") {
+        window.location.replace("/login")
+      } else {
+        router.replace("/login")
+      }
     },
   })
 }

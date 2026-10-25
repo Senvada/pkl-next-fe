@@ -28,6 +28,8 @@ export interface UserItem {
   role_name: string
   role?: UserRole
   department_id?: string | null
+  department_ids?: string[]
+  departments?: UserDepartment[]
   department_name?: string | null
   department?: UserDepartment
   company_id?: string | null
@@ -56,6 +58,7 @@ export interface CreateUserPayload {
   password: string
   role_id: string
   department_id?: string | null
+  department_ids?: string[]
   company_id?: string | null
   parent_id?: string | null
   status?: string
@@ -67,6 +70,7 @@ export interface UpdateUserPayload {
   password?: string
   role_id?: string
   department_id?: string | null
+  department_ids?: string[]
   company_id?: string | null
   parent_id?: string | null
   status?: string

@@ -15,6 +15,8 @@ export type SideNavItem = {
   url: string
   icon?: LucideIcon
   badge?: string | number
+  module?: string
+  adminOnly?: boolean
   items?: SideNavItem[]
 }
 
@@ -41,16 +43,19 @@ export const defaultNavData: SideNavGroup[] = [
         title: "Perusahaan Mitra",
         url: "/dashboard/companies",
         icon: Building2,
+        module: "company",
       },
       {
         title: "Artikel & Berita",
         url: "/dashboard/articles",
         icon: Newspaper,
+        module: "article",
       },
       {
         title: "Galeri Aset",
         url: "/dashboard/assets",
         icon: FolderKanban,
+        module: "asset",
       },
     ],
   },
@@ -61,11 +66,13 @@ export const defaultNavData: SideNavGroup[] = [
         title: "Manajemen Pengguna",
         url: "/dashboard/users",
         icon: Users2,
+        module: "users",
       },
       {
         title: "Hak Akses & Role",
         url: "/dashboard/roles",
         icon: ShieldCheck,
+        module: "role",
       },
     ],
   },
@@ -81,6 +88,7 @@ export const defaultNavData: SideNavGroup[] = [
         title: "Pengaturan",
         url: "/dashboard/settings",
         icon: Settings,
+        adminOnly: true,
       },
     ],
   },

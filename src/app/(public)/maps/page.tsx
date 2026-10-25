@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { COMPANIES, DEPARTMENTS } from "@/lib/mock-data";
 import MapsClient from "./_components/maps-client";
 import { Badge } from "@/components/ui/badge";
 import { Map } from "lucide-react";
@@ -20,8 +19,8 @@ export default async function MapsPage() {
   ]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const displayCompanies = mapItems.length > 0 ? (mapItems as any) : COMPANIES;
-  const displayDepartments = departmentsData.length > 0 ? departmentsData : DEPARTMENTS;
+  const displayCompanies = mapItems.length > 0 ? (mapItems as any) : [];
+  const displayDepartments = departmentsData.length > 0 ? departmentsData : [];
 
   return (
     <div className="pt-28 pb-16 sm:pt-32 sm:pb-24 container mx-auto px-4 sm:px-6 lg:px-8">

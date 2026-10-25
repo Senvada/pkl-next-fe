@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog"
 import type { Company } from "@/types/company"
 import { CompanyDetailInfo } from "./company-detail-info"
+import { CompanyDetailInterns } from "./company-detail-interns"
 
 interface CompanyDetailDialogProps {
   open: boolean
@@ -26,6 +27,8 @@ export function CompanyDetailDialog({
   onOpenChange,
   company,
 }: CompanyDetailDialogProps) {
+  const [tab, setTab] = React.useState<"info" | "interns">("info")
+
   if (!company) return null
 
   return (
@@ -62,7 +65,32 @@ export function CompanyDetailDialog({
           </div>
         </DialogHeader>
 
-        <CompanyDetailInfo company={company} />
+        <div className="flex items-center gap-1.5 p-1 bg-muted/40 rounded-xl border border-border">
+          <button
+            type="button"
+            onClick={() => setTab("info")}
+            className={`flex-1 py-1 px-3 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+              tab === "info" ? "bg-background text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Info Profil Mitra
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab("interns")}
+            className={`flex-1 py-1 px-3 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+              tab === "interns" ? "bg-background text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Peserta PKL ({company.member_count ?? 0})
+          </button>
+        </div>
+
+        {tab === "info" ? (
+          <CompanyDetailInfo company={company} />
+        ) : (
+          <CompanyDetailInterns companyId={company.id} companySlug={company.slug} />
+        )}
 
         <DialogFooter className="pt-3 border-t border-slate-100 dark:border-white/5 flex items-center justify-between sm:justify-between w-full">
           <div className="flex items-center gap-2">

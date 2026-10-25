@@ -93,8 +93,8 @@ export function ProfileAvatarCard({ user }: ProfileAvatarCardProps) {
         <div className="flex flex-col sm:flex-row items-center gap-6 pt-1">
           <div className="relative group">
             <Avatar className="size-24 sm:size-28 rounded-2xl border-2 border-border shadow-md">
-              {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={user.name} className="object-cover" />}
-              <AvatarFallback className="rounded-2xl bg-blue-500/10 text-2xl font-bold text-blue-600 dark:text-blue-400">
+              {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={user.name} className="object-cover rounded-2xl" />}
+              <AvatarFallback className="bg-blue-500/10 text-2xl font-bold text-blue-600 dark:text-blue-400">
                 {initials}
               </AvatarFallback>
             </Avatar>
@@ -156,7 +156,7 @@ export function ProfileAvatarCard({ user }: ProfileAvatarCardProps) {
         onClose={() => setCropperOpen(false)}
         imageSrc={selectedImageSrc}
         aspectRatio={1}
-        cropShape="round"
+        cropShape="rect"
         title="Potong Foto Profil (1:1)"
         description="Posisikan dan potong foto wajah Anda ke dalam rasio lingkaran 1:1."
         outputFileName="avatar.webp"

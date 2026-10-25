@@ -85,13 +85,20 @@ export const UserTableRow = React.memo(function UserTableRow({
           <div className="flex flex-col min-w-0 max-w-[200px]">
             <span className="font-medium text-xs truncate">{user.company.name}</span>
             {user.parent_name && (
-              <span className="text-[10px] text-muted-foreground truncate">PIC: {user.parent_name}</span>
+              <span className="text-[10px] text-muted-foreground truncate">
+                {user.role_name?.toLowerCase() === "siswa" ? `Pembimbing: ${user.parent_name}` : `PIC: ${user.parent_name}`}
+              </span>
             )}
             {user.sub_user_count > 0 && (
               <span className="text-[10px] text-purple-600 dark:text-purple-400 font-medium">
                 {user.sub_user_count} Siswa Terdaftar
               </span>
             )}
+          </div>
+        ) : user.parent_name ? (
+          <div className="flex flex-col min-w-0 max-w-[200px]">
+            <span className="text-muted-foreground/60 text-[11px]">—</span>
+            <span className="text-[10px] text-muted-foreground truncate">Pembimbing: {user.parent_name}</span>
           </div>
         ) : (
           <span className="text-muted-foreground/60 text-[11px]">—</span>
