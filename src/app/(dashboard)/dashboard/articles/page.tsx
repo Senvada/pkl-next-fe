@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { AlertCircle } from "lucide-react";
 import { useCompaniesQuery } from "@/hooks/modules/company";
 import { useCurrentUser } from "@/hooks/modules/auth/useCurrentUser";
@@ -10,11 +11,23 @@ import ArticleFilters from "./_components/article-filters";
 import ArticleGrid from "./_components/article-grid";
 import ArticleDeleteModal from "./_components/article-delete-modal";
 
+const emptySubscribe = () => () => {};
+
 export default function ArticlesDashboardPage() {
+  const mounted = React.useSyncExternalStore(emptySubscribe, () => true, () => false);
+
   const ops = useArticleOperations();
   const { data: companies = [] } = useCompaniesQuery();
   const user = useCurrentUser();
   const isUnboundSiswa = isUserSiswa(user) && !user?.company_id;
+
+  if (!mounted) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="size-8 animate-spin rounded-full border-3 border-blue-600 border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 max-w-7xl space-y-6">

@@ -18,7 +18,7 @@ import NavItem from "./nav-item"
 import SidebarFooterSection, { type SidebarUser } from "./sidebar-footer-section"
 import { defaultNavData, type SideNavGroup } from "./nav-data"
 import { useCurrentUser } from "@/hooks/modules/auth/useCurrentUser"
-import { canAccessFeature, isUserAdmin } from "@/lib/auth/permissions"
+import { canAccessFeature, isUserAdmin, isUserSiswa } from "@/lib/auth/permissions"
 
 export interface AppSidebarProps
   extends React.ComponentProps<typeof Sidebar> {
@@ -40,8 +40,14 @@ export function AppSidebar({
     return navData
       .map((group) => {
         const items = group.items.filter((item) => {
-          if (item.adminOnly) {
-            return isUserAdmin(currentUser)
+          if (item.adminOnly && !isUserAdmin(currentUser)) {
+            return false
+          }
+          if (item.siswaOnly && !isUserSiswa(currentUser)) {
+            return false
+          }
+          if (item.excludeSiswa && isUserSiswa(currentUser)) {
+            return false
           }
           if (item.module) {
             return canAccessFeature(currentUser, item.module)
