@@ -1,5 +1,8 @@
 import {
+  Award,
   Building2,
+  ClipboardCheck,
+  FileSpreadsheet,
   FolderKanban,
   LayoutDashboard,
   Newspaper,
@@ -17,6 +20,8 @@ export type SideNavItem = {
   badge?: string | number
   module?: string
   adminOnly?: boolean
+  siswaOnly?: boolean
+  excludeSiswa?: boolean
   items?: SideNavItem[]
 }
 
@@ -56,6 +61,32 @@ export const defaultNavData: SideNavGroup[] = [
         url: "/dashboard/assets",
         icon: FolderKanban,
         module: "asset",
+      },
+    ],
+  },
+  {
+    group: "Penilaian PKL",
+    items: [
+      {
+        title: "Penilaian Saya",
+        url: "/dashboard/assessments/my",
+        icon: Award,
+        module: "assessment",
+        siswaOnly: true,
+      },
+      {
+        title: "Rekap Nilai Siswa",
+        url: "/dashboard/assessments",
+        icon: FileSpreadsheet,
+        module: "assessment",
+        excludeSiswa: true,
+      },
+      {
+        title: "Template Penilaian",
+        url: "/dashboard/assessments/templates",
+        icon: ClipboardCheck,
+        module: "assessment",
+        excludeSiswa: true,
       },
     ],
   },

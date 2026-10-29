@@ -16,7 +16,7 @@ export function canAccessFeature(user: User | null, module: string): boolean {
   if (isUserAdmin(user)) return true
 
   if (isUserSiswa(user)) {
-    return module === "article" || module === "asset"
+    return module === "article" || module === "asset" || module === "assessment"
   }
 
   const modulePerms = user.permissions?.[module]
@@ -36,6 +36,9 @@ export function hasPermission(
   if (isUserSiswa(user)) {
     if (module === "article" || module === "asset") {
       return action === "write"
+    }
+    if (module === "assessment") {
+      return action === "read" || action === "write" || action === "update"
     }
     return false
   }
