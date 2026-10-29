@@ -25,7 +25,7 @@ export function drawPdfTable(doc: jsPDF, assessment: StudentAssessment, startY: 
 
   const workItems = assessment.work_aspects || []
   const behItems = assessment.behavior_aspects || []
-  const maxRows = Math.max(workItems.length, behItems.length)
+  const maxRows = Math.max(workItems.length, behItems.length, 5)
   const body: RowInput[] = []
 
   for (let i = 0; i < maxRows; i++) {
